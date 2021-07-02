@@ -19,7 +19,7 @@ export const HorizontalAnimation = {
             scale: next
               ? next.progress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [1, 0.95]
+                  outputRange: [1, 0.9]
                 })
               : 1
           }
@@ -45,7 +45,7 @@ export const VerticalSlideAnimation = {
             scale: next
               ? next.progress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [1, 0.95]
+                  outputRange: [1, 0.9]
                 })
               : 1
           }

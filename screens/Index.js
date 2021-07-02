@@ -47,7 +47,8 @@ const Index = ({ navigation }) => {
                 fontFamily: 'Montserrat-Medium'
               }}
             >
-              Let's get you fixed with a tap.
+              Let's get you fixed with a tap. Get to signup as a car owner, a
+              driver or a mechanic.
             </Text>
           </View>
           {/* Call to Actions */}
@@ -90,7 +91,7 @@ const Index = ({ navigation }) => {
                 borderWidth: 0.5,
                 borderColor: Colors.white
               }}
-              onPress={() => navigation.navigate('Signup')}
+              onPress={() => navigation.navigate('Register')}
             >
               <Text
                 style={{
@@ -100,7 +101,7 @@ const Index = ({ navigation }) => {
                   textTransform: 'uppercase'
                 }}
               >
-                Signup
+                Register
               </Text>
             </TouchableOpacity>
           </View>

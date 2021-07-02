@@ -16,7 +16,7 @@ import Colors from '../assets/color'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import Tabs from '../components/Tabs'
 
-const Login = ({ navigation }) => {
+const Register = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current
   const ScrollViewref = React.useRef()
   const onItemPress = React.useCallback(itemIndex => {
@@ -66,9 +66,9 @@ const Login = ({ navigation }) => {
         }}
       >
         <ImageBackground
-          source={require('../assets/images/mechanic-i.jpg')}
+          source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.35,
+            height: Dimensions.get('screen').height * 0.275,
             position: 'relative'
           }}
         >
@@ -92,7 +92,7 @@ const Login = ({ navigation }) => {
                 textTransform: 'uppercase'
               }}
             >
-              Login
+              Register
             </Text>
           </View>
         </ImageBackground>
@@ -131,9 +131,9 @@ const Login = ({ navigation }) => {
           {/* Driver's form */}
           <View
             style={{
-              backgroundColor: Colors.gray[50],
+              backgroundColor: Colors.sky[500],
               width: Dimensions.get('screen').width,
-              height: 400
+              height: 555
             }}
           >
             <Text>Driver</Text>
@@ -152,4 +152,4 @@ const Login = ({ navigation }) => {
   )
 }
 
-export default Login
+export default Register

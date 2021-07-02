@@ -8,7 +8,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { HorizontalAnimation } from './animations'
 import Index from './screens/Index'
-import Signup from './screens/Signup'
+import Register from './screens/Register'
 import Login from './screens/Login'
 
 const Stack = createStackNavigator()
@@ -27,8 +27,8 @@ const App = () => {
           }}
         />
         <Stack.Screen
-          name="Signup"
-          component={Signup}
+          name="Register"
+          component={Register}
           options={{
             title: 'Welcome',
             headerShown: false,
