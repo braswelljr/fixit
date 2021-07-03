@@ -3,14 +3,14 @@ import {
   Text,
   ImageBackground,
   TextInput,
+  Image,
   Dimensions,
   ScrollView,
   KeyboardAvoidingView,
   Animated,
   View,
   TouchableOpacity,
-  Platform,
-  StyleSheet
+  Platform
 } from 'react-native'
 import Colors from '../assets/color'
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -41,7 +41,8 @@ const Register = ({ navigation }) => {
   return (
     <ScrollView
       style={{
-        flex: 1
+        flex: 1,
+        backgroundColor: Colors.white
       }}
     >
       <TouchableOpacity
@@ -68,7 +69,7 @@ const Register = ({ navigation }) => {
         <ImageBackground
           source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.275,
+            height: Dimensions.get('screen').height * 0.3,
             position: 'relative'
           }}
         >
@@ -101,12 +102,7 @@ const Register = ({ navigation }) => {
       {/* Form Area */}
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-        style={{
-          flex: 1,
-          alignSelf: 'stretch',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
+        style={{}}
       >
         {/* Header Tabs */}
         <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
@@ -128,23 +124,144 @@ const Register = ({ navigation }) => {
           )}
           bounces={false}
         >
-          {/* Driver's form */}
+          {/**
+           *  Driver's form
+           */}
           <View
             style={{
-              backgroundColor: Colors.sky[500],
-              width: Dimensions.get('screen').width,
-              height: 555
-            }}
-          >
-            <Text>Driver</Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: Colors.pink[800],
               width: Dimensions.get('screen').width
             }}
           >
-            <Text>Mechanic</Text>
+            <View style={{ paddingHorizontal: 30, marginTop: 20 }}>
+              {/* Google Button */}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: Colors.yellow[100],
+                  paddingVertical: 10,
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                  alignSelf: 'center'
+                }}
+              >
+                <Image
+                  source={require('../assets/images/google.png')}
+                  style={{ height: 15, width: 15 }}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'Montserrat-SemiBold',
+                    textTransform: 'uppercase',
+                    paddingLeft: 20
+                  }}
+                >
+                  Register with Google
+                </Text>
+              </TouchableOpacity>
+
+              {/* or */}
+              <View
+                style={{
+                  position: 'relative',
+                  marginTop: 10,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: 18
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: Colors.trueGray[200],
+                    width: '100%',
+                    height: 1
+                  }}
+                />
+                <Text
+                  style={{
+                    position: 'absolute',
+                    fontSize: 12,
+                    fontFamily: 'Montserrat-SemiBold',
+                    backgroundColor: Colors.white,
+                    paddingHorizontal: 10
+                  }}
+                >
+                  or
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/**
+           * Mechanic's form
+           */}
+          <View
+            style={{
+              width: Dimensions.get('screen').width
+            }}
+          >
+            <View style={{ paddingHorizontal: 30, marginTop: 20 }}>
+              {/* Google Button */}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: Colors.yellow[100],
+                  paddingVertical: 10,
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 7,
+                  alignSelf: 'center'
+                }}
+              >
+                <Image
+                  source={require('../assets/images/google.png')}
+                  style={{ height: 15, width: 15 }}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'Montserrat-SemiBold',
+                    textTransform: 'uppercase',
+                    paddingLeft: 20
+                  }}
+                >
+                  Register with Google
+                </Text>
+              </TouchableOpacity>
+
+              {/* or */}
+              <View
+                style={{
+                  position: 'relative',
+                  marginTop: 10,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: 18
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: Colors.trueGray[200],
+                    width: '100%',
+                    height: 1
+                  }}
+                />
+                <Text
+                  style={{
+                    position: 'absolute',
+                    fontSize: 12,
+                    fontFamily: 'Montserrat-SemiBold',
+                    backgroundColor: Colors.white,
+                    paddingHorizontal: 10
+                  }}
+                >
+                  or
+                </Text>
+              </View>
+            </View>
           </View>
         </Animated.ScrollView>
       </KeyboardAvoidingView>
