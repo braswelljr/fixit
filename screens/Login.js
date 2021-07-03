@@ -54,10 +54,6 @@ const Login = ({ navigation }) => {
     })
   }, [])
 
-  React.useEffect(() => {
-    window.setTimeout(() => setShowAlert({ alert: false, message: '' }), 10000)
-  }, [showAlert])
-
   const data = [
     {
       title: 'Driver',
@@ -357,7 +353,10 @@ const Login = ({ navigation }) => {
                     marginTop: 20
                   }}
                   onPress={() => {
-                    setShowAlert({ alert: true, message: 'Empty Fields' })
+                    setShowAlert({
+                      alert: !showAlert.alert,
+                      message: 'Empty Fields'
+                    })
                   }}
                 >
                   <Text
