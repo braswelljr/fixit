@@ -31,26 +31,104 @@ const Login = ({ navigation }) => {
     message: ''
   })
   // driver
-  const [uEmail, setUEmail] = React.useState({
-    email: '',
-    message: ''
-  })
-  const [uPassword, setUPassword] = React.useState({
+  const [userData, setUserData] = React.useState({
+    email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
-    message: ''
+    isValidEmail: true,
+    isValidPassword: true,
+    showPassword: true
   })
-  const [ushowPassword, setUShowPassword] = React.useState(true)
+
+  const changeUserEmailInput = e => {
+    if (e.length > 0) {
+      setUserData({
+        ...userData,
+        email: e,
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+          ? true
+          : false
+      })
+    } else {
+      setUserData({
+        ...userData,
+        email: e,
+        isValidEmail: false
+      })
+    }
+  }
+
+  const changeUserPasswordInput = e => {
+    if (e.length > 0) {
+      setUserData({
+        ...userData,
+        password: e,
+        isValidPassword: e.length >= 8 ? true : false
+      })
+    } else {
+      setUserData({
+        ...userData,
+        password: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const toggleShowPasswordUser = e => {
+    setUserData({
+      ...userData,
+      showPassword: !e
+    })
+  }
 
   // mechanic
-  const [mEmail, setMEmail] = React.useState({
-    email: '',
-    message: ''
-  })
-  const [mPassword, setMPassword] = React.useState({
+  const [mechanicData, setMechanicData] = React.useState({
+    email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
-    message: ''
+    isValidEmail: true,
+    isValidPassword: true,
+    showPassword: true
   })
-  const [mshowPassword, setMShowPassword] = React.useState(true)
+
+  const changeMechEmailInput = e => {
+    if (e.length > 0) {
+      setMechanicData({
+        ...userData,
+        email: e,
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+          ? true
+          : false
+      })
+    } else {
+      setMechanicData({
+        ...userData,
+        email: e,
+        isValidEmail: false
+      })
+    }
+  }
+
+  const changeMechPasswordInput = e => {
+    if (e.length > 0) {
+      setMechanicData({
+        ...userData,
+        password: e,
+        isValidPassword: e.length >= 8 ? true : false
+      })
+    } else {
+      setMechanicData({
+        ...userData,
+        password: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const toggleShowPasswordMech = e => {
+    setMechanicData({
+      ...userData,
+      showPassword: !e
+    })
+  }
 
   const onItemPress = React.useCallback(itemIndex => {
     ScrollViewref?.current?.scrollTo({
@@ -274,27 +352,13 @@ const Login = ({ navigation }) => {
                     Email
                   </Text>
                   <TextInput
-                    value={uEmail.email}
+                    value={userData.email}
                     placeholder="johndoe@gmail.com"
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e =>
-                      setUEmail({
-                        email: e,
-                        message:
-                          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
-                            ? 'Good 😎'
-                            : "Doesn't look like a valid email☹️"
-                      })
-                    }
+                    onChangeText={e => changeUserEmailInput(e)}
                     style={{
                       borderWidth: 0.5,
-                      borderColor:
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          uEmail
-                        )
-                          ? ''
-                          : Colors.red[500],
                       padding: 7,
                       color: Colors.black,
                       borderRadius: 7,
@@ -304,15 +368,10 @@ const Login = ({ navigation }) => {
                   />
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Regular',
-                      color: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        uEmail
-                      )
-                        ? ''
-                        : Colors.red[500]
+                      fontFamily: 'Montserrat-Regular'
                     }}
                   >
-                    {uEmail.message}
+                    Email must be valid
                   </Text>
                 </View>
                 {/*
@@ -342,20 +401,24 @@ const Login = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() => setUShowPassword(!ushowPassword)}
+                      onPress={() =>
+                        toggleShowPasswordUser(userData.showPassword)
+                      }
                     >
                       <MaterialIcon
-                        name={ushowPassword ? 'eye' : 'eye-off'}
+                        name={userData.showPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
-                      value={uPassword.password}
-                      placeholder="********"
+                      value={userData.password}
+                      placeholder={
+                        userData.showPassword ? '********' : '&%gr4xcw'
+                      }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={ushowPassword}
-                      onChangeText={e => setUPassword(e)}
+                      secureTextEntry={userData.showPassword}
+                      onChangeText={e => changeUserPasswordInput(e)}
                       style={{
                         padding: 7,
                         color: Colors.black,
@@ -369,7 +432,7 @@ const Login = ({ navigation }) => {
                     />
                   </View>
                   <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    {uPassword.message}
+                    Invalid Password
                   </Text>
                 </View>
                 {/*
@@ -387,28 +450,7 @@ const Login = ({ navigation }) => {
                     alignSelf: 'center',
                     marginTop: 20
                   }}
-                  onPress={() => {
-                    console.log('hey')
-                    // firestore()
-                    //   .collection('users')
-                    //   .where('email', '==', `braswellkenneth7@gmail.com`)
-                    //   .get()
-                    //   .then(res => console.log(res))
-                    //   .catch(error => console.error(error))
-
-                    firestore()
-                      .collection('users')
-                      .add({
-                        avatar: '',
-                        name: 'KB',
-                        email: 'kb@gmail.com',
-                        phone: '555',
-
-                        password: 'password'
-                      })
-                      .then(() => console.log('Sign up successful!'))
-                      .catch(error => console.error(error))
-                  }}
+                  onPress={() => {}}
                 >
                   <Text
                     style={{
@@ -510,27 +552,13 @@ const Login = ({ navigation }) => {
                     Email
                   </Text>
                   <TextInput
-                    value={mEmail.email}
+                    value={mechanicData.email}
                     placeholder="janedoe@gmail.com"
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e =>
-                      setMEmail({
-                        email: e,
-                        message:
-                          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
-                            ? 'Good 😎'
-                            : "Doesn't look like a valid email☹️"
-                      })
-                    }
+                    onChangeText={e => changeMechEmailInput(e)}
                     style={{
                       borderWidth: 0.5,
-                      borderColor:
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          mEmail
-                        )
-                          ? ''
-                          : Colors.red[500],
                       padding: 7,
                       color: Colors.black,
                       borderRadius: 7,
@@ -540,15 +568,10 @@ const Login = ({ navigation }) => {
                   />
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Regular',
-                      color: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        uEmail
-                      )
-                        ? ''
-                        : Colors.red[500]
+                      fontFamily: 'Montserrat-Regular'
                     }}
                   >
-                    {uEmail.message}
+                    Enter valid email
                   </Text>
                 </View>
                 {/*
@@ -578,20 +601,24 @@ const Login = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() => setMShowPassword(!mshowPassword)}
+                      onPress={() =>
+                        toggleShowPasswordMech(mechanicData.showPassword)
+                      }
                     >
                       <MaterialIcon
-                        name={mshowPassword ? 'eye' : 'eye-off'}
+                        name={mechanicData.showPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
-                      value={mPassword.password}
-                      placeholder={mshowPassword ? '********' : '&%gr4xcw'}
+                      value={mechanicData.password}
+                      placeholder={
+                        mechanicData.showPassword ? '********' : '&%gr4xcw'
+                      }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={mshowPassword}
-                      onChangeText={e => setMPassword(e)}
+                      secureTextEntry={mechanicData.showPassword}
+                      onChangeText={e => changeMechPasswordInput(e)}
                       style={{
                         padding: 7,
                         color: Colors.black,
@@ -605,7 +632,7 @@ const Login = ({ navigation }) => {
                     />
                   </View>
                   <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    {mPassword.message}
+                    incorrect data
                   </Text>
                 </View>
                 {/*

@@ -17,6 +17,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tabs from '../components/Tabs'
 import { usekeyboardHeight } from '../hooks/usekeyboard'
+import firestore from '@react-native-firebase/firestore'
 
 const Register = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current
@@ -30,44 +31,155 @@ const Register = ({ navigation }) => {
     message: ''
   })
   // driver
-  const [uName, setUName] = React.useState({
+  const [userData, setUserData] = React.useState({
     name: '',
-    message: ''
-  })
-  const [uEmail, setUEmail] = React.useState({
-    email: '',
-    message: ''
-  })
-  const [uPassword, setUPassword] = React.useState({
+    email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
-    message: ''
+    confirmPassword: '',
+    isValidEmail: true,
+    isValidPassword: true,
+    showPassword: true,
+    passwordConfirmed: true
   })
-  const [uConfirmPassword, setUConfirmPassword] = React.useState({
-    password: '',
-    message: ''
-  })
-  const [ushowPassword, setUShowPassword] = React.useState(true)
-  const [ucshowPassword, setUCShowPassword] = React.useState(true)
+
+  const changeUserNameInput = e => {
+    setUserData({
+      ...userData,
+      name: e
+    })
+  }
+  const changeUserEmailInput = e => {
+    if (e.length > 0) {
+      setUserData({
+        ...userData,
+        email: e,
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+          ? true
+          : false
+      })
+    } else {
+      setUserData({
+        ...userData,
+        email: e,
+        isValidEmail: false
+      })
+    }
+  }
+
+  const changeUserPasswordInput = e => {
+    if (e.length > 0) {
+      setUserData({
+        ...userData,
+        password: e,
+        isValidPassword: e.length >= 8 ? true : false
+      })
+    } else {
+      setUserData({
+        ...userData,
+        password: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const changeUserConfirmPasswordInput = e => {
+    if (e.length > 0) {
+      setUserData({
+        ...userData,
+        confirmPassword: e,
+        passwordConfirmed: userData.password === e ? true : false
+      })
+    } else {
+      setUserData({
+        ...userData,
+        confirmPassword: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const toggleShowPasswordUser = e => {
+    setUserData({
+      ...userData,
+      showPassword: !e
+    })
+  }
 
   // mechanic
-  const [mName, setMName] = React.useState({
+  const [mechanicData, setMechanicData] = React.useState({
     name: '',
-    message: ''
-  })
-  const [mEmail, setMEmail] = React.useState({
-    email: '',
-    message: ''
-  })
-  const [mPassword, setMPassword] = React.useState({
+    email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
-    message: ''
+    confirmPassword: '',
+    isValidEmail: true,
+    isValidPassword: true,
+    showPassword: true,
+    passwordConfirmed: true
   })
-  const [mConfirmPassword, setMConfirmPassword] = React.useState({
-    password: '',
-    message: ''
-  })
-  const [mshowPassword, setMShowPassword] = React.useState(true)
-  const [mcshowPassword, setMCShowPassword] = React.useState(true)
+
+  const changeMechNameInput = e => {
+    setMechanicData({
+      ...mechanicData,
+      name: e
+    })
+  }
+
+  const changeMechEmailInput = e => {
+    if (e.length > 0) {
+      setMechanicData({
+        ...mechanicData,
+        email: e,
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+          ? true
+          : false
+      })
+    } else {
+      setMechanicData({
+        ...mechanicData,
+        email: e,
+        isValidEmail: false
+      })
+    }
+  }
+
+  const changeMechPasswordInput = e => {
+    if (e.length > 0) {
+      setMechanicData({
+        ...mechanicData,
+        password: e,
+        isValidPassword: e.length >= 8 ? true : false
+      })
+    } else {
+      setMechanicData({
+        ...mechanicData,
+        password: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const changeMechConfirmPasswordInput = e => {
+    if (e.length > 0) {
+      setMechanicData({
+        ...mechanicData,
+        confirmPassword: e,
+        passwordConfirmed: mechanicData.password === e ? true : false
+      })
+    } else {
+      setMechanicData({
+        ...mechanicData,
+        confirmPassword: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const toggleShowPasswordMech = e => {
+    setMechanicData({
+      ...mechanicData,
+      showPassword: !e
+    })
+  }
 
   const onItemPress = React.useCallback(itemIndex => {
     ScrollViewref?.current?.scrollTo({
@@ -80,6 +192,7 @@ const Register = ({ navigation }) => {
   const keyboardHeight = usekeyboardHeight()
 
   // keyboard listener
+
   React.useEffect(() => {
     const onKeyboardDidShow = () => {
       scrollContainerRef.current.scrollTo({
@@ -143,7 +256,7 @@ const Register = ({ navigation }) => {
         <ImageBackground
           source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.2,
+            height: Dimensions.get('screen').height * 0.23,
             position: 'relative'
           }}
         >
@@ -215,7 +328,7 @@ const Register = ({ navigation }) => {
               style={{
                 paddingHorizontal: 30,
                 paddingVertical: 5,
-                marginTop: 20
+                marginTop: 10
               }}
             >
               {/* Google Button */}
@@ -282,35 +395,21 @@ const Register = ({ navigation }) => {
                * Inputs
                */}
               <View style={{ marginTop: 10 }}>
-                {/**
-                 * Name
+                {/*
+                 * email field
                  */}
-                <View style={{}}>
+                <View style={{ position: 'relative' }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Name
                   </Text>
                   <TextInput
-                    value={uName.name}
+                    value={userData.name}
                     placeholder="John Doe"
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e =>
-                      setUName({
-                        email: e,
-                        message:
-                          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
-                            ? 'Good 😎'
-                            : "Doesn't look like a valid email☹️"
-                      })
-                    }
+                    onChangeText={e => changeUserNameInput(e)}
                     style={{
                       borderWidth: 0.5,
-                      borderColor:
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          uName
-                        )
-                          ? ''
-                          : Colors.red[500],
                       padding: 7,
                       color: Colors.black,
                       borderRadius: 7,
@@ -320,46 +419,27 @@ const Register = ({ navigation }) => {
                   />
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Regular',
-                      color: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        uEmail
-                      )
-                        ? ''
-                        : Colors.red[500]
+                      fontFamily: 'Montserrat-Regular'
                     }}
                   >
-                    {uName.message}
+                    Usename must not be null
                   </Text>
                 </View>
                 {/*
-                 * Email field
+                 * email field
                  */}
-                <View style={{}}>
+                <View style={{ position: 'relative' }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Email
                   </Text>
                   <TextInput
-                    value={uEmail.email}
+                    value={userData.email}
                     placeholder="johndoe@gmail.com"
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e =>
-                      setUEmail({
-                        email: e,
-                        message:
-                          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
-                            ? 'Good 😎'
-                            : "Doesn't look like a valid email☹️"
-                      })
-                    }
+                    onChangeText={e => changeUserEmailInput(e)}
                     style={{
                       borderWidth: 0.5,
-                      borderColor:
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          uEmail
-                        )
-                          ? ''
-                          : Colors.red[500],
                       padding: 7,
                       color: Colors.black,
                       borderRadius: 7,
@@ -369,15 +449,10 @@ const Register = ({ navigation }) => {
                   />
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Regular',
-                      color: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        uEmail
-                      )
-                        ? ''
-                        : Colors.red[500]
+                      fontFamily: 'Montserrat-Regular'
                     }}
                   >
-                    {uEmail.message}
+                    Email must be valid
                   </Text>
                 </View>
                 {/*
@@ -407,20 +482,24 @@ const Register = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() => setUShowPassword(!ushowPassword)}
+                      onPress={() =>
+                        toggleShowPasswordUser(userData.showPassword)
+                      }
                     >
                       <MaterialIcon
-                        name={ushowPassword ? 'eye' : 'eye-off'}
+                        name={userData.showPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
-                      value={uPassword.password}
-                      placeholder="********"
+                      value={userData.password}
+                      placeholder={
+                        userData.showPassword ? '********' : 'xc5667%%'
+                      }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={ushowPassword}
-                      onChangeText={e => setUPassword(e)}
+                      secureTextEntry={userData.showPassword}
+                      onChangeText={e => changeUserPasswordInput(e)}
                       style={{
                         padding: 7,
                         color: Colors.black,
@@ -434,7 +513,7 @@ const Register = ({ navigation }) => {
                     />
                   </View>
                   <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    {uPassword.message}
+                    Password length must be 8 or more
                   </Text>
                 </View>
                 {/*
@@ -464,20 +543,24 @@ const Register = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() => setUCShowPassword(!ucshowPassword)}
+                      onPress={() =>
+                        toggleShowPasswordUser(userData.showPassword)
+                      }
                     >
                       <MaterialIcon
-                        name={ucshowPassword ? 'eye' : 'eye-off'}
+                        name={userData.showPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
-                      value={uConfirmPassword.password}
-                      placeholder="********"
+                      value={userData.confirmPassword}
+                      placeholder={
+                        userData.showPassword ? '********' : 'xc5667%%'
+                      }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={ucshowPassword}
-                      onChangeText={e => setUConfirmPassword(e)}
+                      secureTextEntry={userData.showPassword}
+                      onChangeText={e => changeUserConfirmPasswordInput(e)}
                       style={{
                         padding: 7,
                         color: Colors.black,
@@ -491,7 +574,7 @@ const Register = ({ navigation }) => {
                     />
                   </View>
                   <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    {uConfirmPassword.message}
+                    Invalid Password
                   </Text>
                 </View>
                 {/*
@@ -509,12 +592,7 @@ const Register = ({ navigation }) => {
                     alignSelf: 'center',
                     marginTop: 10
                   }}
-                  onPress={() => {
-                    setShowAlert({
-                      alert: !showAlert.alert,
-                      message: 'Empty Fields'
-                    })
-                  }}
+                  onPress={() => {}}
                 >
                   <Text
                     style={{
@@ -541,7 +619,7 @@ const Register = ({ navigation }) => {
               style={{
                 paddingHorizontal: 30,
                 paddingVertical: 5,
-                marginTop: 20
+                marginTop: 10
               }}
             >
               {/* Google Button */}
@@ -608,35 +686,19 @@ const Register = ({ navigation }) => {
                * Inputs
                */}
               <View style={{ marginTop: 10 }}>
-                {/**
-                 * Name
-                 */}
-                <View style={{}}>
+                {/* Name */}
+                <View style={{ position: 'relative' }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Name
                   </Text>
                   <TextInput
-                    value={mName.name}
+                    value={mechanicData.name}
                     placeholder="Jane Doe"
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e =>
-                      setMName({
-                        name: e,
-                        message:
-                          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
-                            ? 'Good 😎'
-                            : "Doesn't look like a valid email☹️"
-                      })
-                    }
+                    onChangeText={e => changeMechNameInput(e)}
                     style={{
                       borderWidth: 0.5,
-                      borderColor:
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          uName
-                        )
-                          ? ''
-                          : Colors.red[500],
                       padding: 7,
                       color: Colors.black,
                       borderRadius: 7,
@@ -646,46 +708,27 @@ const Register = ({ navigation }) => {
                   />
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Regular',
-                      color: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        uEmail
-                      )
-                        ? ''
-                        : Colors.red[500]
+                      fontFamily: 'Montserrat-Regular'
                     }}
                   >
-                    {mName.message}
+                    Name field should not be empty
                   </Text>
                 </View>
                 {/*
                  * Mechanic or email field
                  */}
-                <View style={{ position: 'relative' }}>
+                <View style={{ marginTop: 10 }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Email
                   </Text>
                   <TextInput
-                    value={mEmail.email}
+                    value={mechanicData.email}
                     placeholder="janedoe@gmail.com"
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e =>
-                      setMEmail({
-                        email: e,
-                        message:
-                          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
-                            ? 'Good 😎'
-                            : "Doesn't look like a valid email☹️"
-                      })
-                    }
+                    onChangeText={e => changeMechEmailInput(e)}
                     style={{
                       borderWidth: 0.5,
-                      borderColor:
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          mEmail
-                        )
-                          ? ''
-                          : Colors.red[500],
                       padding: 7,
                       color: Colors.black,
                       borderRadius: 7,
@@ -695,15 +738,10 @@ const Register = ({ navigation }) => {
                   />
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Regular',
-                      color: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        uEmail
-                      )
-                        ? ''
-                        : Colors.red[500]
+                      fontFamily: 'Montserrat-Regular'
                     }}
                   >
-                    {uEmail.message}
+                    Enter valid email
                   </Text>
                 </View>
                 {/*
@@ -733,20 +771,24 @@ const Register = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() => setMShowPassword(!mshowPassword)}
+                      onPress={() =>
+                        toggleShowPasswordMech(mechanicData.showPassword)
+                      }
                     >
                       <MaterialIcon
-                        name={mshowPassword ? 'eye' : 'eye-off'}
+                        name={mechanicData.showPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
-                      value={mPassword.password}
-                      placeholder="********"
+                      value={mechanicData.password}
+                      placeholder={
+                        mechanicData.showPassword ? '********' : '&%gr4xcw'
+                      }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={mshowPassword}
-                      onChangeText={e => setMPassword(e)}
+                      secureTextEntry={mechanicData.showPassword}
+                      onChangeText={e => changeMechPasswordInput(e)}
                       style={{
                         padding: 7,
                         color: Colors.black,
@@ -760,7 +802,7 @@ const Register = ({ navigation }) => {
                     />
                   </View>
                   <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    {mPassword.message}
+                    Password should be 8 or more
                   </Text>
                 </View>
                 {/*
@@ -790,20 +832,24 @@ const Register = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() => setMCShowPassword(!mcshowPassword)}
+                      onPress={() =>
+                        toggleShowPasswordMech(mechanicData.showPassword)
+                      }
                     >
                       <MaterialIcon
-                        name={mcshowPassword ? 'eye' : 'eye-off'}
+                        name={mechanicData.showPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
-                      value={mConfirmPassword.password}
-                      placeholder="********"
+                      value={mechanicData.confirmPassword}
+                      placeholder={
+                        mechanicData.showPassword ? '********' : '&%gr4xcw'
+                      }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={mcshowPassword}
-                      onChangeText={e => setMConfirmPassword(e)}
+                      secureTextEntry={mechanicData.showPassword}
+                      onChangeText={e => changeMechConfirmPasswordInput(e)}
                       style={{
                         padding: 7,
                         color: Colors.black,
@@ -817,7 +863,7 @@ const Register = ({ navigation }) => {
                     />
                   </View>
                   <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    {mConfirmPassword.message}
+                    Password should be 8 or more
                   </Text>
                 </View>
                 {/*
@@ -885,7 +931,7 @@ const Register = ({ navigation }) => {
               or
             </Text>
           </View>
-          {/* Register */}
+          {/* Login */}
           <TouchableOpacity
             style={{
               backgroundColor: Colors.yellow[100],
