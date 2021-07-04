@@ -62,7 +62,7 @@ const Login = ({ navigation }) => {
       setUserData({
         ...userData,
         password: e,
-        isValidPassword: e.length >= 8 ? true : false
+        isValidPassword: e.length <= 0 ? true : false
       })
     } else {
       setUserData({
@@ -366,13 +366,16 @@ const Login = ({ navigation }) => {
                       fontFamily: 'Montserrat-SemiBold'
                     }}
                   />
-                  <Text
-                    style={{
-                      fontFamily: 'Montserrat-Regular'
-                    }}
-                  >
-                    Email must be valid
-                  </Text>
+                  {userData.isValidEmail ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Enter a valid email
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Password Field
@@ -431,9 +434,16 @@ const Login = ({ navigation }) => {
                       }}
                     />
                   </View>
-                  <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    Invalid Password
-                  </Text>
+                  {userData.isValidPassword ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Password field must not be empty
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Submit Button
@@ -566,13 +576,16 @@ const Login = ({ navigation }) => {
                       fontFamily: 'Montserrat-SemiBold'
                     }}
                   />
-                  <Text
-                    style={{
-                      fontFamily: 'Montserrat-Regular'
-                    }}
-                  >
-                    Enter valid email
-                  </Text>
+                  {mechanicData.isValidEmail ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Enter a valid email
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Password Field
@@ -631,9 +644,16 @@ const Login = ({ navigation }) => {
                       }}
                     />
                   </View>
-                  <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    incorrect data
-                  </Text>
+                  {mechanicData.isValidPassword ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Password field must not be empty
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Submit Button

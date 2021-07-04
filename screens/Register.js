@@ -18,6 +18,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tabs from '../components/Tabs'
 import { usekeyboardHeight } from '../hooks/usekeyboard'
 import firestore from '@react-native-firebase/firestore'
+import auth from '@react-native-firebase/auth'
 
 const Register = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current
@@ -32,22 +33,16 @@ const Register = ({ navigation }) => {
   })
   // driver
   const [userData, setUserData] = React.useState({
-    name: '',
     email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
     confirmPassword: '',
     isValidEmail: true,
     isValidPassword: true,
     showPassword: true,
+    showConfirmPassword: true,
     passwordConfirmed: true
   })
 
-  const changeUserNameInput = e => {
-    setUserData({
-      ...userData,
-      name: e
-    })
-  }
   const changeUserEmailInput = e => {
     if (e.length > 0) {
       setUserData({
@@ -104,25 +99,24 @@ const Register = ({ navigation }) => {
       showPassword: !e
     })
   }
+  const toggleShowConfirmPasswordUser = e => {
+    setUserData({
+      ...userData,
+      showPassword: !e
+    })
+  }
 
   // mechanic
   const [mechanicData, setMechanicData] = React.useState({
-    name: '',
     email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
     confirmPassword: '',
     isValidEmail: true,
     isValidPassword: true,
     showPassword: true,
+    showConfirmPassword: true,
     passwordConfirmed: true
   })
-
-  const changeMechNameInput = e => {
-    setMechanicData({
-      ...mechanicData,
-      name: e
-    })
-  }
 
   const changeMechEmailInput = e => {
     if (e.length > 0) {
@@ -178,6 +172,12 @@ const Register = ({ navigation }) => {
     setMechanicData({
       ...mechanicData,
       showPassword: !e
+    })
+  }
+  const toggleShowConfirmPasswordMech = e => {
+    setMechanicData({
+      ...mechanicData,
+      showConfirmPassword: !e
     })
   }
 
@@ -256,7 +256,7 @@ const Register = ({ navigation }) => {
         <ImageBackground
           source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.23,
+            height: Dimensions.get('screen').height * 0.27,
             position: 'relative'
           }}
         >
@@ -328,7 +328,7 @@ const Register = ({ navigation }) => {
               style={{
                 paddingHorizontal: 30,
                 paddingVertical: 5,
-                marginTop: 10
+                marginTop: 15
               }}
             >
               {/* Google Button */}
@@ -363,7 +363,7 @@ const Register = ({ navigation }) => {
               <View
                 style={{
                   position: 'relative',
-                  marginTop: 10,
+                  marginTop: 15,
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -394,37 +394,7 @@ const Register = ({ navigation }) => {
                * Driver or car owners form
                * Inputs
                */}
-              <View style={{ marginTop: 10 }}>
-                {/*
-                 * email field
-                 */}
-                <View style={{ position: 'relative' }}>
-                  <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
-                    Name
-                  </Text>
-                  <TextInput
-                    value={userData.name}
-                    placeholder="John Doe"
-                    placeholderTextColor={Colors.trueGray[400]}
-                    autoCapitalize="none"
-                    onChangeText={e => changeUserNameInput(e)}
-                    style={{
-                      borderWidth: 0.5,
-                      padding: 7,
-                      color: Colors.black,
-                      borderRadius: 7,
-                      marginVertical: 2.5,
-                      fontFamily: 'Montserrat-SemiBold'
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontFamily: 'Montserrat-Regular'
-                    }}
-                  >
-                    Usename must not be null
-                  </Text>
-                </View>
+              <View style={{ marginTop: 15 }}>
                 {/*
                  * email field
                  */}
@@ -447,18 +417,21 @@ const Register = ({ navigation }) => {
                       fontFamily: 'Montserrat-SemiBold'
                     }}
                   />
-                  <Text
-                    style={{
-                      fontFamily: 'Montserrat-Regular'
-                    }}
-                  >
-                    Email must be valid
-                  </Text>
+                  {userData.isValidEmail ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Enter a valid email
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Password Field
                  */}
-                <View style={{ marginTop: 10 }}>
+                <View style={{ marginTop: 15 }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Password
                   </Text>
@@ -512,14 +485,21 @@ const Register = ({ navigation }) => {
                       }}
                     />
                   </View>
-                  <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    Password length must be 8 or more
-                  </Text>
+                  {userData.isValidPassword ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Password length must be 8 or more
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Confirm Password Field
                  */}
-                <View style={{ marginTop: 10 }}>
+                <View style={{ marginTop: 15 }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Confirm Password
                   </Text>
@@ -544,22 +524,24 @@ const Register = ({ navigation }) => {
                         padding: 4
                       }}
                       onPress={() =>
-                        toggleShowPasswordUser(userData.showPassword)
+                        toggleShowConfirmPasswordUser(
+                          userData.showConfirmPassword
+                        )
                       }
                     >
                       <MaterialIcon
-                        name={userData.showPassword ? 'eye' : 'eye-off'}
+                        name={userData.showConfirmPassword ? 'eye' : 'eye-off'}
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
                       value={userData.confirmPassword}
                       placeholder={
-                        userData.showPassword ? '********' : 'xc5667%%'
+                        userData.showConfirmPassword ? '********' : 'xc5667%%'
                       }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={userData.showPassword}
+                      secureTextEntry={userData.showConfirmPassword}
                       onChangeText={e => changeUserConfirmPasswordInput(e)}
                       style={{
                         padding: 7,
@@ -573,9 +555,16 @@ const Register = ({ navigation }) => {
                       }}
                     />
                   </View>
-                  <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    Invalid Password
-                  </Text>
+                  {userData.passwordConfirmed ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Passwords don't match
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Submit Button
@@ -590,7 +579,7 @@ const Register = ({ navigation }) => {
                     justifyContent: 'center',
                     borderRadius: 7,
                     alignSelf: 'center',
-                    marginTop: 10
+                    marginTop: 15
                   }}
                   onPress={() => {}}
                 >
@@ -619,7 +608,7 @@ const Register = ({ navigation }) => {
               style={{
                 paddingHorizontal: 30,
                 paddingVertical: 5,
-                marginTop: 10
+                marginTop: 15
               }}
             >
               {/* Google Button */}
@@ -654,7 +643,7 @@ const Register = ({ navigation }) => {
               <View
                 style={{
                   position: 'relative',
-                  marginTop: 10,
+                  marginTop: 15,
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -685,39 +674,11 @@ const Register = ({ navigation }) => {
                * Mechanic form
                * Inputs
                */}
-              <View style={{ marginTop: 10 }}>
-                {/* Name */}
-                <View style={{ position: 'relative' }}>
-                  <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
-                    Name
-                  </Text>
-                  <TextInput
-                    value={mechanicData.name}
-                    placeholder="Jane Doe"
-                    placeholderTextColor={Colors.trueGray[400]}
-                    autoCapitalize="none"
-                    onChangeText={e => changeMechNameInput(e)}
-                    style={{
-                      borderWidth: 0.5,
-                      padding: 7,
-                      color: Colors.black,
-                      borderRadius: 7,
-                      marginVertical: 2.5,
-                      fontFamily: 'Montserrat-SemiBold'
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontFamily: 'Montserrat-Regular'
-                    }}
-                  >
-                    Name field should not be empty
-                  </Text>
-                </View>
+              <View style={{ marginTop: 15 }}>
                 {/*
                  * Mechanic or email field
                  */}
-                <View style={{ marginTop: 10 }}>
+                <View style={{}}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Email
                   </Text>
@@ -736,18 +697,21 @@ const Register = ({ navigation }) => {
                       fontFamily: 'Montserrat-SemiBold'
                     }}
                   />
-                  <Text
-                    style={{
-                      fontFamily: 'Montserrat-Regular'
-                    }}
-                  >
-                    Enter valid email
-                  </Text>
+                  {mechanicData.isValidEmail ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Enter a valid email
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Password Field
                  */}
-                <View style={{ marginTop: 10 }}>
+                <View style={{ marginTop: 15 }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Password
                   </Text>
@@ -801,14 +765,21 @@ const Register = ({ navigation }) => {
                       }}
                     />
                   </View>
-                  <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    Password should be 8 or more
-                  </Text>
+                  {mechanicData.isValidPassword ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Password length should be 8 or more.
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Confirm Password Field
                  */}
-                <View style={{ marginTop: 10 }}>
+                <View style={{ marginTop: 15 }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Confirm Password
                   </Text>
@@ -833,22 +804,28 @@ const Register = ({ navigation }) => {
                         padding: 4
                       }}
                       onPress={() =>
-                        toggleShowPasswordMech(mechanicData.showPassword)
+                        toggleShowConfirmPasswordMech(
+                          mechanicData.showConfirmPassword
+                        )
                       }
                     >
                       <MaterialIcon
-                        name={mechanicData.showPassword ? 'eye' : 'eye-off'}
+                        name={
+                          mechanicData.showConfirmPassword ? 'eye' : 'eye-off'
+                        }
                         size={25}
                       />
                     </TouchableOpacity>
                     <TextInput
                       value={mechanicData.confirmPassword}
                       placeholder={
-                        mechanicData.showPassword ? '********' : '&%gr4xcw'
+                        mechanicData.showConfirmPassword
+                          ? '********'
+                          : '&%gr4xcw'
                       }
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
-                      secureTextEntry={mechanicData.showPassword}
+                      secureTextEntry={mechanicData.showConfirmPassword}
                       onChangeText={e => changeMechConfirmPasswordInput(e)}
                       style={{
                         padding: 7,
@@ -862,9 +839,16 @@ const Register = ({ navigation }) => {
                       }}
                     />
                   </View>
-                  <Text style={{ fontFamily: 'Montserrat-Regular' }}>
-                    Password should be 8 or more
-                  </Text>
+                  {mechanicData.passwordConfirmed ? null : (
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+                        color: Colors.red[400]
+                      }}
+                    >
+                      Passwords don't match
+                    </Text>
+                  )}
                 </View>
                 {/*
                  *Submit Button
@@ -879,7 +863,7 @@ const Register = ({ navigation }) => {
                     justifyContent: 'center',
                     borderRadius: 7,
                     alignSelf: 'center',
-                    marginTop: 10
+                    marginTop: 15
                   }}
                 >
                   <Text
@@ -905,7 +889,7 @@ const Register = ({ navigation }) => {
           <View
             style={{
               position: 'relative',
-              marginTop: 10,
+              marginTop: 15,
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
@@ -942,7 +926,7 @@ const Register = ({ navigation }) => {
               justifyContent: 'center',
               borderRadius: 7,
               alignSelf: 'center',
-              marginTop: 10
+              marginTop: 15
             }}
             onPress={() => navigation.navigate('Login')}
           >
