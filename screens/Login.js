@@ -6,7 +6,7 @@ import {
   Image,
   Dimensions,
   ScrollView,
-  KeyboardAvoidingView,
+  Keyboard,
   Animated,
   View,
   TouchableOpacity,
@@ -16,10 +16,16 @@ import Colors from '../assets/color'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tabs from '../components/Tabs'
+import { usekeyboardHeight } from '../hooks/usekeyboard'
+import firestore from '@react-native-firebase/firestore'
 
 const Login = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current
   const ScrollViewref = React.useRef()
+  const scrollContainerRef = React.useRef()
+  const keyboardShowRef = React.useRef()
+  const [keyboardShowView, setKeyboardShowView] = React.useState(0)
+
   const [showAlert, setShowAlert] = React.useState({
     alert: false,
     message: ''
@@ -53,6 +59,29 @@ const Login = ({ navigation }) => {
       animated: true
     })
   }, [])
+  // keyboard height
+  const keyboardHeight = usekeyboardHeight()
+
+  // keyboard listener
+
+  React.useEffect(() => {
+    const onKeyboardDidShow = () => {
+      scrollContainerRef.current.scrollTo({
+        x: 0,
+        y: keyboardShowView,
+        animated: true
+      })
+    }
+    const onKeyboardDidHide = () => {
+      scrollContainerRef.current.scrollTo({
+        x: 0,
+        y: 0,
+        animated: true
+      })
+    }
+    Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
+    Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
+  }, [keyboardShowView])
 
   const data = [
     {
@@ -67,9 +96,11 @@ const Login = ({ navigation }) => {
 
   return (
     <ScrollView
+      ref={scrollContainerRef}
       style={{
+        backgroundColor: Colors.white,
         flex: 1,
-        backgroundColor: Colors.white
+        minHeight: Dimensions.get('screen').height
       }}
     >
       <TouchableOpacity
@@ -103,7 +134,7 @@ const Login = ({ navigation }) => {
           <View
             style={{
               position: 'absolute',
-              backgroundColor: 'rgba(0,0,0,0.7)',
+              backgroundColor: 'rgba(0,0,0,0.4)',
               top: 0,
               left: 0,
               right: 0,
@@ -127,9 +158,13 @@ const Login = ({ navigation }) => {
       </View>
 
       {/* Form Area */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-        style={{}}
+
+      <View
+        ref={keyboardShowRef}
+        onLayout={event => {
+          setKeyboardShowView(event.nativeEvent.layout.y)
+          console.log(keyboardShowView)
+        }}
       >
         {/* Header Tabs */}
         <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
@@ -353,17 +388,32 @@ const Login = ({ navigation }) => {
                     marginTop: 20
                   }}
                   onPress={() => {
-                    setShowAlert({
-                      alert: !showAlert.alert,
-                      message: 'Empty Fields'
-                    })
+                    console.log('hey')
+                    // firestore()
+                    //   .collection('users')
+                    //   .where('email', '==', `braswellkenneth7@gmail.com`)
+                    //   .get()
+                    //   .then(res => console.log(res))
+                    //   .catch(error => console.error(error))
+
+                    firestore()
+                      .collection('users')
+                      .add({
+                        avatar: '',
+                        name: 'KB',
+                        email: 'kb@gmail.com',
+                        phone: '555',
+
+                        password: 'password'
+                      })
+                      .then(() => console.log('Sign up successful!'))
+                      .catch(error => console.error(error))
                   }}
                 >
                   <Text
                     style={{
                       fontFamily: 'Montserrat-SemiBold',
-                      textTransform: 'uppercase',
-                      paddingLeft: 20
+                      textTransform: 'uppercase'
                     }}
                   >
                     Login
@@ -504,7 +554,7 @@ const Login = ({ navigation }) => {
                 {/*
                  *Password Field
                  */}
-                <View style={{ marginTop: 20 }}>
+                <View style={{ marginTop: 15 }}>
                   <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                     Password
                   </Text>
@@ -537,7 +587,7 @@ const Login = ({ navigation }) => {
                     </TouchableOpacity>
                     <TextInput
                       value={mPassword.password}
-                      placeholder="********"
+                      placeholder={mshowPassword ? '********' : '&%gr4xcw'}
                       placeholderTextColor={Colors.trueGray[400]}
                       autoCapitalize="none"
                       secureTextEntry={mshowPassword}
@@ -571,7 +621,7 @@ const Login = ({ navigation }) => {
                     justifyContent: 'center',
                     borderRadius: 7,
                     alignSelf: 'center',
-                    marginTop: 20
+                    marginTop: 15
                   }}
                 >
                   <Text
@@ -634,15 +684,14 @@ const Login = ({ navigation }) => {
               justifyContent: 'center',
               borderRadius: 7,
               alignSelf: 'center',
-              marginTop: 20
+              marginTop: 10
             }}
             onPress={() => navigation.navigate('Register')}
           >
             <Text
               style={{
                 fontFamily: 'Montserrat-SemiBold',
-                textTransform: 'uppercase',
-                paddingLeft: 20
+                textTransform: 'uppercase'
               }}
             >
               Register
@@ -674,7 +723,13 @@ const Login = ({ navigation }) => {
             {showAlert.message}
           </Text>
         </View>
-      </KeyboardAvoidingView>
+        {/* Keyboard */}
+        <View
+          style={{
+            height: keyboardHeight <= 0 ? keyboardHeight : keyboardHeight + 50
+          }}
+        />
+      </View>
     </ScrollView>
   )
 }
