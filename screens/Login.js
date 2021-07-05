@@ -10,14 +10,17 @@ import {
   Animated,
   View,
   TouchableOpacity,
-  Platform
+  Alert,
+  Platform,
+  KeyboardAvoidingView
 } from 'react-native'
 import Colors from '../assets/color'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tabs from '../components/Tabs'
 import { usekeyboardHeight } from '../hooks/usekeyboard'
-import firestore from '@react-native-firebase/firestore'
+import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayout'
+import { AuthContext } from '../context/AuthProvider'
 
 const Login = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current
@@ -25,11 +28,8 @@ const Login = ({ navigation }) => {
   const scrollContainerRef = React.useRef()
   const keyboardShowRef = React.useRef()
   const [keyboardShowView, setKeyboardShowView] = React.useState(0)
+  const { login } = React.useContext(AuthContext)
 
-  const [showAlert, setShowAlert] = React.useState({
-    alert: false,
-    message: ''
-  })
   // driver
   const [userData, setUserData] = React.useState({
     email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
@@ -44,7 +44,9 @@ const Login = ({ navigation }) => {
       setUserData({
         ...userData,
         email: e,
-        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+          e.trim()
+        )
           ? true
           : false
       })
@@ -58,11 +60,11 @@ const Login = ({ navigation }) => {
   }
 
   const changeUserPasswordInput = e => {
-    if (e.length > 0) {
+    if (e.trim().length > 0) {
       setUserData({
         ...userData,
         password: e,
-        isValidPassword: e.length <= 0 ? true : false
+        isValidPassword: e.trim().length >= 0 ? true : false
       })
     } else {
       setUserData({
@@ -94,7 +96,9 @@ const Login = ({ navigation }) => {
       setMechanicData({
         ...userData,
         email: e,
-        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+          e.trim()
+        )
           ? true
           : false
       })
@@ -142,7 +146,7 @@ const Login = ({ navigation }) => {
 
   // keyboard listener
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const onKeyboardDidShow = () => {
       scrollContainerRef.current.scrollTo({
         x: 0,
@@ -159,6 +163,10 @@ const Login = ({ navigation }) => {
     }
     Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
     Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
+      Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
+    }
   }, [keyboardShowView])
 
   const data = [
@@ -237,12 +245,14 @@ const Login = ({ navigation }) => {
 
       {/* Form Area */}
 
-      <View
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         ref={keyboardShowRef}
         onLayout={event => {
           setKeyboardShowView(event.nativeEvent.layout.y)
           console.log(keyboardShowView)
         }}
+        style={{ flex: 1 }}
       >
         {/* Header Tabs */}
         <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
@@ -460,7 +470,24 @@ const Login = ({ navigation }) => {
                     alignSelf: 'center',
                     marginTop: 20
                   }}
-                  onPress={() => {}}
+                  onPress={() => {
+                    if (userData.email == '' && userData.password === '') {
+                      Alert.alert('', 'Empty Fields', [{ text: 'OK' }])
+                    } else {
+                      if (
+                        userData.isValidEmail == true &&
+                        userData.isValidPassword == true &&
+                        userData.email !== '' &&
+                        userData.password !== ''
+                      ) {
+                        login(userData.email, userData.password)
+                      } else {
+                        Alert.alert('', 'Authentication Error!', [
+                          { text: 'OK' }
+                        ])
+                      }
+                    }
+                  }}
                 >
                   <Text
                     style={{
@@ -670,6 +697,28 @@ const Login = ({ navigation }) => {
                     alignSelf: 'center',
                     marginTop: 15
                   }}
+                  onPress={() => {
+                    if (
+                      mechanicData.email == '' &&
+                      mechanicData.password === '' &&
+                      mechanicData.confirmPassword === ''
+                    ) {
+                      Alert.alert('', 'Empty Fields', [{ text: 'OK' }])
+                    } else {
+                      if (
+                        mechanicData.isValidEmail == true &&
+                        mechanicData.isValidPassword == true &&
+                        mechanicData.email !== '' &&
+                        mechanicData.password !== ''
+                      ) {
+                        login(mechanicData.email, mechanicData.password)
+                      } else {
+                        Alert.alert('', 'Authentication Error!', [
+                          { text: 'OK' }
+                        ])
+                      }
+                    }
+                  }}
                 >
                   <Text
                     style={{
@@ -746,37 +795,13 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Alert box */}
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 30,
-            left: 30,
-            backgroundColor: Colors.yellow[200],
-            padding: 20,
-            borderRadius: 7,
-            minHeight: 80,
-            transform: [
-              {
-                translateY: showAlert.alert ? 0 : 100
-              }
-            ]
-          }}
-        >
-          <Text
-            style={{ textAlign: 'center', fontFamily: 'Montserrat-Regular' }}
-          >
-            {showAlert.message}
-          </Text>
-        </View>
         {/* Keyboard */}
         <View
           style={{
             height: keyboardHeight <= 0 ? keyboardHeight : keyboardHeight + 50
           }}
         />
-      </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   )
 }

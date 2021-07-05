@@ -16,8 +16,8 @@ export const usekeyboardHeight = () => {
     Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
     Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
     return () => {
-      Keyboard.removeAllListeners('keyboardDidShow', onKeyboardDidShow)
-      Keyboard.removeAllListeners('keyboardDidHide', onKeyboardDidHide)
+      Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
+      Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
     }
   }, [])
 

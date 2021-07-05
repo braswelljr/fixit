@@ -10,15 +10,17 @@ import {
   Animated,
   View,
   TouchableOpacity,
-  Platform
+  Platform,
+  KeyboardAvoidingView,
+  Alert
 } from 'react-native'
 import Colors from '../assets/color'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tabs from '../components/Tabs'
 import { usekeyboardHeight } from '../hooks/usekeyboard'
-import firestore from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
+import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayout'
+import { AuthContext } from '../context/AuthProvider'
 
 const Register = ({ navigation }) => {
   const scrollX = React.useRef(new Animated.Value(0)).current
@@ -26,11 +28,8 @@ const Register = ({ navigation }) => {
   const scrollContainerRef = React.useRef()
   const keyboardShowRef = React.useRef()
   const [keyboardShowView, setKeyboardShowView] = React.useState(0)
+  const { register } = React.useContext(AuthContext)
 
-  const [showAlert, setShowAlert] = React.useState({
-    alert: false,
-    message: ''
-  })
   // driver
   const [userData, setUserData] = React.useState({
     email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
@@ -48,7 +47,9 @@ const Register = ({ navigation }) => {
       setUserData({
         ...userData,
         email: e,
-        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(e)
+        isValidEmail: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+          e.trim()
+        )
           ? true
           : false
       })
@@ -62,11 +63,11 @@ const Register = ({ navigation }) => {
   }
 
   const changeUserPasswordInput = e => {
-    if (e.length > 0) {
+    if (e.trim().length > 0) {
       setUserData({
         ...userData,
         password: e,
-        isValidPassword: e.length >= 8 ? true : false
+        isValidPassword: e.trim().length >= 8 ? true : false
       })
     } else {
       setUserData({
@@ -78,11 +79,11 @@ const Register = ({ navigation }) => {
   }
 
   const changeUserConfirmPasswordInput = e => {
-    if (e.length > 0) {
+    if (e.trim().length > 0) {
       setUserData({
         ...userData,
-        confirmPassword: e,
-        passwordConfirmed: userData.password === e ? true : false
+        confirmPassword: e.trim(),
+        passwordConfirmed: userData.password === e.trim() ? true : false
       })
     } else {
       setUserData({
@@ -102,7 +103,7 @@ const Register = ({ navigation }) => {
   const toggleShowConfirmPasswordUser = e => {
     setUserData({
       ...userData,
-      showPassword: !e
+      showConfirmPassword: !e
     })
   }
 
@@ -141,7 +142,7 @@ const Register = ({ navigation }) => {
       setMechanicData({
         ...mechanicData,
         password: e,
-        isValidPassword: e.length >= 8 ? true : false
+        isValidPassword: e.trim().length >= 8 ? true : false
       })
     } else {
       setMechanicData({
@@ -156,8 +157,8 @@ const Register = ({ navigation }) => {
     if (e.length > 0) {
       setMechanicData({
         ...mechanicData,
-        confirmPassword: e,
-        passwordConfirmed: mechanicData.password === e ? true : false
+        confirmPassword: e.trim(),
+        passwordConfirmed: mechanicData.password === e.trim() ? true : false
       })
     } else {
       setMechanicData({
@@ -193,7 +194,7 @@ const Register = ({ navigation }) => {
 
   // keyboard listener
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const onKeyboardDidShow = () => {
       scrollContainerRef.current.scrollTo({
         x: 0,
@@ -210,6 +211,11 @@ const Register = ({ navigation }) => {
     }
     Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
     Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
+      Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
+    }
   }, [keyboardShowView])
 
   const data = [
@@ -256,7 +262,7 @@ const Register = ({ navigation }) => {
         <ImageBackground
           source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.27,
+            height: Dimensions.get('screen').height * 0.3,
             position: 'relative'
           }}
         >
@@ -288,12 +294,14 @@ const Register = ({ navigation }) => {
 
       {/* Form Area */}
 
-      <View
+      <KeyboardAvoidingView
+        behavior="height"
         ref={keyboardShowRef}
         onLayout={event => {
           setKeyboardShowView(event.nativeEvent.layout.y)
           console.log(keyboardShowView)
         }}
+        style={{ flex: 1 }}
       >
         {/* Header Tabs */}
         <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
@@ -523,11 +531,11 @@ const Register = ({ navigation }) => {
                         right: 5,
                         padding: 4
                       }}
-                      onPress={() =>
+                      onPress={() => {
                         toggleShowConfirmPasswordUser(
                           userData.showConfirmPassword
                         )
-                      }
+                      }}
                     >
                       <MaterialIcon
                         name={userData.showConfirmPassword ? 'eye' : 'eye-off'}
@@ -581,7 +589,27 @@ const Register = ({ navigation }) => {
                     alignSelf: 'center',
                     marginTop: 15
                   }}
-                  onPress={() => {}}
+                  onPress={() => {
+                    if (
+                      userData.email == '' &&
+                      userData.password === '' &&
+                      userData.confirmPassword === ''
+                    ) {
+                      Alert.alert('Empty Fields', [{ text: 'OK' }])
+                    } else {
+                      if (
+                        userData.isValidEmail == true &&
+                        userData.isValidPassword == true &&
+                        userData.passwordConfirmed == true &&
+                        userData.email !== '' &&
+                        userData.password !== ''
+                      ) {
+                        register('users', userData.email, userData.password)
+                      } else {
+                        Alert.alert('Authentication Error!', [{ text: 'OK' }])
+                      }
+                    }
+                  }}
                 >
                   <Text
                     style={{
@@ -865,6 +893,27 @@ const Register = ({ navigation }) => {
                     alignSelf: 'center',
                     marginTop: 15
                   }}
+                  onPress={() => {
+                    if (
+                      mechanicData.email == '' &&
+                      mechanicData.password === '' &&
+                      mechanicData.confirmPassword === ''
+                    ) {
+                      Alert.alert('Empty Fields', [{ text: 'OK' }])
+                    } else {
+                      if (
+                        mechanicData.isValidEmail == true &&
+                        mechanicData.isValidPassword == true &&
+                        mechanicData.passwordConfirmed == true &&
+                        mechanicData.email !== '' &&
+                        mechanicData.password !== ''
+                      ) {
+                        register('mechanic', userData.email, userData.password)
+                      } else {
+                        Alert.alert('Authentication Error!', [{ text: 'OK' }])
+                      }
+                    }
+                  }}
                 >
                   <Text
                     style={{
@@ -941,37 +990,13 @@ const Register = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Alert box */}
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 30,
-            left: 30,
-            backgroundColor: Colors.yellow[200],
-            padding: 20,
-            borderRadius: 7,
-            minHeight: 80,
-            transform: [
-              {
-                translateY: showAlert.alert ? 0 : 100
-              }
-            ]
-          }}
-        >
-          <Text
-            style={{ textAlign: 'center', fontFamily: 'Montserrat-Regular' }}
-          >
-            {showAlert.message}
-          </Text>
-        </View>
         {/* Keyboard */}
         <View
           style={{
             height: keyboardHeight <= 0 ? keyboardHeight : keyboardHeight + 50
           }}
         />
-      </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   )
 }

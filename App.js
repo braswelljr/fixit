@@ -4,47 +4,31 @@
  */
 import 'react-native-gesture-handler'
 import React from 'react'
+import auth from '@react-native-firebase/auth'
+import { AuthContext } from './context/AuthProvider'
+import AuthStack from './navigation/AuthStack'
+import AppStack from './navigation/AppStack'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { HorizontalAnimation } from './animations'
-import Index from './screens/Index'
-import Register from './screens/Register'
-import Login from './screens/Login'
-
-const Stack = createStackNavigator()
 
 const App = () => {
+  const { user, setUser } = React.useContext(AuthContext)
+  const [initializing, setInitializing] = React.useState(true)
+
+  const onAuthStateChanged = user => {
+    setUser(user)
+    if (initializing) setInitializing(false)
+  }
+
+  React.useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged)
+    return subscriber // unsubscribe on unmount
+  }, [])
+
+  if (initializing) return null
+
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Index"
-          component={Index}
-          options={{
-            title: 'Welcome',
-            headerShown: false,
-            ...HorizontalAnimation
-          }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={Register}
-          options={{
-            title: 'Welcome',
-            headerShown: false,
-            ...HorizontalAnimation
-          }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            title: 'Welcome',
-            headerShown: false,
-            ...HorizontalAnimation
-          }}
-        />
-      </Stack.Navigator>
+      {user ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   )
 }
