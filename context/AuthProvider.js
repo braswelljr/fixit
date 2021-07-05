@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
                     lastname: '',
                     email: email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
-                    userImg: null
+                    avatar: null
                   })
                   //ensure we catch any errors at this stage to advise us if something does go wrong
                   .catch(error => {
