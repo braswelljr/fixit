@@ -53,3 +53,23 @@ const Tabs = ({ data, scrollX, onItemPress }) => {
 }
 
 export default Tabs
+{
+  /* <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} /> */
+}
+// const data = [
+//   {
+//     title: 'Driver',
+//     ref: React.createRef()
+//   },
+//   {
+//     title: 'Mechanic',
+//     ref: React.createRef()
+//   }
+// ]
+// const onItemPress = React.useCallback(itemIndex => {
+//   ScrollViewref?.current?.scrollTo({
+//     x: itemIndex * Dimensions.get('screen').width,
+//     y: 0,
+//     animated: true
+//   })
+// }, [])
