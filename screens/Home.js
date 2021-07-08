@@ -1,47 +1,82 @@
 import React from 'react'
-import { View, Text, Platform, TouchableOpacity } from 'react-native'
+import { View, Animated, Dimensions, StyleSheet } from 'react-native'
 import Colors from '../assets/color'
-import { AuthContext } from '../context/AuthProvider'
+import Tabs from '../components/Tabs'
+import Index from './Home/Index'
+import Profile from './Home/Profile'
+import Settings from './Home/Settings'
 
-const Home = ({ navigation, route }) => {
-  const { user, logout } = React.useContext(AuthContext)
+const Home = () => {
+  const scrollX = React.useRef(new Animated.Value(0)).current
+  const ScrollViewref = React.useRef()
+  const data = [
+    {
+      title: 'Home',
+      ref: React.createRef()
+    },
+    {
+      title: 'Profile',
+      ref: React.createRef()
+    },
+    {
+      title: 'Settings',
+      ref: React.createRef()
+    }
+  ]
+  const onItemPress = React.useCallback(itemIndex => {
+    ScrollViewref?.current?.scrollTo({
+      x: itemIndex * Dimensions.get('screen').width,
+      y: 0,
+      animated: true
+    })
+  }, [])
+
   return (
-    <View style={{ flex: 1 }}>
-      <Text
-        style={{
-          paddingHorizontal: 30,
-          marginTop: Platform.OS == 'ios' ? 60 : 30,
-          fontFamily: 'Montserrat-Bold',
-          textAlign: 'center'
-        }}
+    <View style={styles.container}>
+      <Animated.ScrollView
+        ref={ScrollViewref}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        pagingEnabled
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: { x: scrollX }
+              }
+            }
+          ],
+          { useNativeDriver: false }
+        )}
+        bounces={false}
       >
-        {user.uid}
-      </Text>
-      <TouchableOpacity
-        style={{
-          paddingHorizontal: 40,
-          marginHorizontal: 30,
-          marginTop: 30,
-          flexDirection: 'row',
-          justifyContent: 'center',
-          paddingVertical: 10,
-          backgroundColor: Colors.yellow[300],
-          borderRadius: 10
-        }}
-        onPress={() => logout()}
-      >
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            color: Colors.black,
-            textTransform: 'uppercase'
-          }}
-        >
-          Logout
-        </Text>
-      </TouchableOpacity>
+        <Index />
+        <Profile />
+        <Settings />
+      </Animated.ScrollView>
+      {/* Tabs */}
+      <View style={styles.slab}>
+        <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
+      </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white
+  },
+  slab: {
+    position: 'absolute',
+    zIndex: 2,
+    margin: 10,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 20,
+    backgroundColor: Colors.yellow[50]
+  }
+})
 
 export default Home

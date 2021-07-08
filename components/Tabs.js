@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import Indicator from './Indicator'
 import Tab from './Tab'
 
-const Tabs = ({ data, scrollX, onItemPress }) => {
+const Tabs = ({ data, style, scrollX, onItemPress }) => {
   const containerRef = React.useRef()
   const [measures, setMeasures] = React.useState([])
 
@@ -46,30 +46,15 @@ const Tabs = ({ data, scrollX, onItemPress }) => {
         })}
       </View>
       {measures.length > 0 && (
-        <Indicator measures={measures} data={data} scrollX={scrollX} />
+        <Indicator
+          measures={measures}
+          style={style}
+          data={data}
+          scrollX={scrollX}
+        />
       )}
     </View>
   )
 }
 
 export default Tabs
-{
-  /* <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} /> */
-}
-// const data = [
-//   {
-//     title: 'Driver',
-//     ref: React.createRef()
-//   },
-//   {
-//     title: 'Mechanic',
-//     ref: React.createRef()
-//   }
-// ]
-// const onItemPress = React.useCallback(itemIndex => {
-//   ScrollViewref?.current?.scrollTo({
-//     x: itemIndex * Dimensions.get('screen').width,
-//     y: 0,
-//     animated: true
-//   })
-// }, [])

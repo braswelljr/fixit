@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  ActivityIndicator,
   Text,
   ImageBackground,
   TextInput,
@@ -7,12 +8,12 @@ import {
   Dimensions,
   ScrollView,
   Keyboard,
-  Animated,
   View,
   TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
-  Alert
+  Alert,
+  StyleSheet
 } from 'react-native'
 import Colors from '../assets/color'
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -22,12 +23,11 @@ import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayout'
 import { AuthContext } from '../context/AuthProvider'
 
 const Register = ({ navigation }) => {
-  const scrollX = React.useRef(new Animated.Value(0)).current
-  const ScrollViewref = React.useRef()
   const scrollContainerRef = React.useRef()
   const keyboardShowRef = React.useRef()
   const [keyboardShowView, setKeyboardShowView] = React.useState(0)
   const { register } = React.useContext(AuthContext)
+  const [loading, setLoading] = React.useState(false)
 
   // driver
   const [data, setData] = React.useState({
@@ -135,15 +135,14 @@ const Register = ({ navigation }) => {
     }
   }, [keyboardShowView])
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 6000)
+  }, [loading])
+
   return (
-    <ScrollView
-      ref={scrollContainerRef}
-      style={{
-        backgroundColor: Colors.white,
-        flex: 1,
-        minHeight: Dimensions.get('screen').height
-      }}
-    >
+    <ScrollView ref={scrollContainerRef} style={styles.container}>
       <TouchableOpacity
         style={{
           position: 'absolute',
@@ -168,32 +167,12 @@ const Register = ({ navigation }) => {
         <ImageBackground
           source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.3,
+            height: Dimensions.get('screen').height * 0.35,
             position: 'relative'
           }}
         >
-          <View
-            style={{
-              position: 'absolute',
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <Text
-              style={{
-                color: Colors.white,
-                fontFamily: 'MontserratAlternates-Bold',
-                fontSize: 35,
-                textTransform: 'uppercase'
-              }}
-            >
-              Register
-            </Text>
+          <View style={styles.imgCover}>
+            <Text style={styles.headerText}>Register</Text>
           </View>
         </ImageBackground>
       </View>
@@ -209,377 +188,200 @@ const Register = ({ navigation }) => {
         }}
         style={{ flex: 1 }}
       >
-        {/* ScrollView */}
-        <Animated.ScrollView
-          ref={ScrollViewref}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: { x: scrollX }
-                }
-              }
-            ],
-            { useNativeDriver: false }
-          )}
-          bounces={false}
-          style={{}}
+        {/**
+         * Driver or car owners form
+         */}
+        <View
+          style={{
+            width: Dimensions.get('screen').width
+          }}
         >
-          {/**
-           * Driver or car owners form
-           */}
           <View
             style={{
-              width: Dimensions.get('screen').width
+              paddingHorizontal: 30,
+              paddingVertical: 5,
+              marginTop: 15
             }}
           >
-            <View
-              style={{
-                paddingHorizontal: 30,
-                paddingVertical: 5,
-                marginTop: 15
-              }}
-            >
-              {/* Google Button */}
-              <TouchableOpacity
-                style={{
-                  backgroundColor: Colors.yellow[100],
-                  paddingVertical: 10,
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 7,
-                  alignSelf: 'center'
-                }}
-              >
-                <Image
-                  source={require('../assets/images/google.png')}
-                  style={{ height: 15, width: 15 }}
-                />
-                <Text
-                  style={{
-                    fontFamily: 'Montserrat-SemiBold',
-                    textTransform: 'uppercase',
+            {/* Google Button */}
+            <TouchableOpacity style={[styles.cta]}>
+              <Image
+                source={require('../assets/images/google.png')}
+                style={{ height: 15, width: 15 }}
+              />
+              <Text
+                style={[
+                  styles.ctaText,
+                  {
                     paddingLeft: 20
-                  }}
-                >
-                  Register with Google
-                </Text>
-              </TouchableOpacity>
-
-              {/* or */}
-              <View
-                style={{
-                  position: 'relative',
-                  marginTop: 15,
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: 18
-                }}
+                  }
+                ]}
               >
-                <View
-                  style={{
-                    backgroundColor: Colors.trueGray[200],
-                    width: '100%',
-                    height: 1
-                  }}
-                />
-                <Text
-                  style={{
-                    position: 'absolute',
-                    fontSize: 12,
-                    fontFamily: 'Montserrat-SemiBold',
-                    backgroundColor: Colors.white,
-                    paddingHorizontal: 10
-                  }}
-                >
-                  or
-                </Text>
-              </View>
+                Register with Google
+              </Text>
+            </TouchableOpacity>
 
-              {/**
-               * Driver or car owners form
-               * Inputs
+            {/* or */}
+            <View style={styles.orWrapper}>
+              <View style={styles.orLine} />
+              <Text style={styles.orText}>or</Text>
+            </View>
+
+            {/**
+             * Driver or car owners form
+             * Inputs
+             */}
+            <View style={{ marginTop: 15 }}>
+              {/*
+               * email field
+               */}
+              <View style={{ position: 'relative' }}>
+                <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>Email</Text>
+                <TextInput
+                  value={data.email}
+                  placeholder="johndoe@gmail.com"
+                  placeholderTextColor={Colors.trueGray[400]}
+                  autoCapitalize="none"
+                  onChangeText={e => changeEmailInput(e)}
+                  style={styles.textInput}
+                />
+                {data.isValidEmail ? null : (
+                  <Text style={styles.isValid}>Enter a valid email</Text>
+                )}
+              </View>
+              {/*
+               *Password Field
                */}
               <View style={{ marginTop: 15 }}>
-                {/*
-                 * email field
-                 */}
-                <View style={{ position: 'relative' }}>
-                  <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
-                    Email
-                  </Text>
+                <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
+                  Password
+                </Text>
+                <View style={styles.passInputContainer}>
+                  <TouchableOpacity
+                    style={styles.showPassword}
+                    onPress={() => toggleShowPassword(data.showPassword)}
+                  >
+                    <MaterialIcon
+                      name={data.showPassword ? 'eye' : 'eye-off'}
+                      size={25}
+                    />
+                  </TouchableOpacity>
                   <TextInput
-                    value={data.email}
-                    placeholder="johndoe@gmail.com"
+                    value={data.password}
+                    placeholder={data.showPassword ? '********' : 'xc5667%%'}
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
-                    onChangeText={e => changeEmailInput(e)}
-                    style={{
-                      borderWidth: 0.5,
-                      padding: 7,
-                      color: Colors.black,
-                      borderRadius: 7,
-                      marginVertical: 2.5,
-                      fontFamily: 'Montserrat-SemiBold'
-                    }}
+                    secureTextEntry={data.showPassword}
+                    onChangeText={e => changePasswordInput(e)}
+                    style={styles.passInput}
                   />
-                  {data.isValidEmail ? null : (
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-Regular',
-                        color: Colors.red[400]
-                      }}
-                    >
-                      Enter a valid email
-                    </Text>
-                  )}
                 </View>
-                {/*
-                 *Password Field
-                 */}
-                <View style={{ marginTop: 15 }}>
-                  <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
-                    Password
+                {data.isValidPassword ? null : (
+                  <Text style={styles.isValid}>
+                    Password length must be 8 or more
                   </Text>
-                  <View
-                    style={{
-                      marginVertical: 2.5,
-                      position: 'relative',
-                      height: 45,
-                      flexDirection: 'row',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                      borderWidth: 0.5,
-                      borderRadius: 7
+                )}
+              </View>
+              {/*
+               *Confirm Password Field
+               */}
+              <View style={{ marginTop: 15 }}>
+                <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
+                  Confirm Password
+                </Text>
+                <View style={styles.passInputContainer}>
+                  <TouchableOpacity
+                    style={styles.showPassword}
+                    onPress={() => {
+                      toggleShowConfirmPassword(data.showConfirmPassword)
                     }}
                   >
-                    <TouchableOpacity
-                      style={{
-                        position: 'absolute',
-                        zIndex: 1,
-                        right: 5,
-                        padding: 4
-                      }}
-                      onPress={() => toggleShowPassword(data.showPassword)}
-                    >
-                      <MaterialIcon
-                        name={data.showPassword ? 'eye' : 'eye-off'}
-                        size={25}
-                      />
-                    </TouchableOpacity>
-                    <TextInput
-                      value={data.password}
-                      placeholder={data.showPassword ? '********' : 'xc5667%%'}
-                      placeholderTextColor={Colors.trueGray[400]}
-                      autoCapitalize="none"
-                      secureTextEntry={data.showPassword}
-                      onChangeText={e => changePasswordInput(e)}
-                      style={{
-                        padding: 7,
-                        color: Colors.black,
-                        fontFamily: 'Montserrat-SemiBold',
-                        position: 'absolute',
-                        top: 0,
-                        bottom: 0,
-                        right: 0,
-                        left: 0
-                      }}
+                    <MaterialIcon
+                      name={data.showConfirmPassword ? 'eye' : 'eye-off'}
+                      size={25}
                     />
-                  </View>
-                  {data.isValidPassword ? null : (
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-Regular',
-                        color: Colors.red[400]
-                      }}
-                    >
-                      Password length must be 8 or more
-                    </Text>
-                  )}
-                </View>
-                {/*
-                 *Confirm Password Field
-                 */}
-                <View style={{ marginTop: 15 }}>
-                  <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
-                    Confirm Password
-                  </Text>
-                  <View
-                    style={{
-                      marginVertical: 2.5,
-                      position: 'relative',
-                      height: 45,
-                      flexDirection: 'row',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                      borderWidth: 0.5,
-                      borderRadius: 7
-                    }}
-                  >
-                    <TouchableOpacity
-                      style={{
-                        position: 'absolute',
-                        zIndex: 1,
-                        right: 5,
-                        padding: 4
-                      }}
-                      onPress={() => {
-                        toggleShowConfirmPassword(data.showConfirmPassword)
-                      }}
-                    >
-                      <MaterialIcon
-                        name={data.showConfirmPassword ? 'eye' : 'eye-off'}
-                        size={25}
-                      />
-                    </TouchableOpacity>
-                    <TextInput
-                      value={data.confirmPassword}
-                      placeholder={
-                        data.showConfirmPassword ? '********' : 'xc5667%%'
-                      }
-                      placeholderTextColor={Colors.trueGray[400]}
-                      autoCapitalize="none"
-                      secureTextEntry={data.showConfirmPassword}
-                      onChangeText={e => changeConfirmPasswordInput(e)}
-                      style={{
-                        padding: 7,
-                        color: Colors.black,
-                        fontFamily: 'Montserrat-SemiBold',
-                        position: 'absolute',
-                        top: 0,
-                        bottom: 0,
-                        right: 0,
-                        left: 0
-                      }}
-                    />
-                  </View>
-                  {data.passwordConfirmed ? null : (
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-Regular',
-                        color: Colors.red[400]
-                      }}
-                    >
-                      Passwords don't match
-                    </Text>
-                  )}
-                </View>
-                {/*
-                 *Submit Button
-                 */}
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: Colors.yellow[100],
-                    paddingVertical: 10,
-                    width: '100%',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 7,
-                    alignSelf: 'center',
-                    marginTop: 15
-                  }}
-                  onPress={() => {
-                    if (
-                      data.email == '' &&
-                      data.password === '' &&
-                      data.confirmPassword === ''
-                    ) {
-                      Alert.alert('Empty Fields', [{ text: 'OK' }])
-                    } else {
-                      if (
-                        data.isValidEmail == true &&
-                        data.isValidPassword == true &&
-                        data.passwordConfirmed == true &&
-                        data.email !== '' &&
-                        data.password !== ''
-                      ) {
-                        register('users', data.email, data.password)
-                      } else {
-                        Alert.alert('Authentication Error!', [{ text: 'OK' }])
-                      }
+                  </TouchableOpacity>
+                  <TextInput
+                    value={data.confirmPassword}
+                    placeholder={
+                      data.showConfirmPassword ? '********' : 'xc5667%%'
                     }
-                  }}
-                >
+                    placeholderTextColor={Colors.trueGray[400]}
+                    autoCapitalize="none"
+                    secureTextEntry={data.showConfirmPassword}
+                    onChangeText={e => changeConfirmPasswordInput(e)}
+                    style={styles.passInput}
+                  />
+                </View>
+                {data.passwordConfirmed ? null : (
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-SemiBold',
-                      textTransform: 'uppercase'
+                      fontFamily: 'Montserrat-Regular',
+                      color: Colors.red[400]
                     }}
                   >
-                    Register
+                    Passwords don't match
                   </Text>
-                </TouchableOpacity>
+                )}
               </View>
+              {/*
+               *Submit Button
+               */}
+              <TouchableOpacity
+                style={[styles.cta, { marginTop: 15 }]}
+                onPress={() => {
+                  if (
+                    data.email == '' &&
+                    data.password === '' &&
+                    data.confirmPassword === ''
+                  ) {
+                    Alert.alert('Empty Fields', [{ text: 'OK' }])
+                  } else {
+                    if (
+                      data.isValidEmail == true &&
+                      data.isValidPassword == true &&
+                      data.passwordConfirmed == true &&
+                      data.email !== '' &&
+                      data.password !== ''
+                    ) {
+                      register(data.email, data.password)
+                      setLoading(true)
+                    } else {
+                      Alert.alert('Authentication Error!', [{ text: 'OK' }])
+                    }
+                  }
+                }}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color={Colors.sky[900]} />
+                ) : (
+                  <Text style={styles.ctaText}>Register</Text>
+                )}
+              </TouchableOpacity>
             </View>
           </View>
-        </Animated.ScrollView>
+        </View>
 
         {/**
          * Bottom Register Navigator
          */}
         <View style={{ paddingHorizontal: 30, paddingBottom: 10 }}>
           {/* or */}
-          <View
-            style={{
-              position: 'relative',
-              marginTop: 15,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: 18
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: Colors.trueGray[200],
-                width: '100%',
-                height: 1
-              }}
-            />
-            <Text
-              style={{
-                position: 'absolute',
-                fontSize: 12,
-                fontFamily: 'Montserrat-SemiBold',
-                backgroundColor: Colors.white,
-                paddingHorizontal: 10
-              }}
-            >
-              or
-            </Text>
+          <View style={[styles.orWrapper]}>
+            <View style={styles.orLine} />
+            <Text style={styles.orText}>or</Text>
           </View>
           {/* Login */}
           <TouchableOpacity
-            style={{
-              backgroundColor: Colors.yellow[100],
-              paddingVertical: 10,
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 7,
-              alignSelf: 'center',
-              marginTop: 15
-            }}
+            style={[
+              styles.cta,
+              {
+                marginTop: 15
+              }
+            ]}
             onPress={() => navigation.navigate('Login')}
           >
-            <Text
-              style={{
-                fontFamily: 'Montserrat-SemiBold',
-                textTransform: 'uppercase'
-              }}
-            >
-              Login
-            </Text>
+            <Text style={styles.ctaText}>Login</Text>
           </TouchableOpacity>
         </View>
 
@@ -593,5 +395,102 @@ const Register = ({ navigation }) => {
     </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.white,
+    flex: 1,
+    minHeight: Dimensions.get('screen').height
+  },
+  headerText: {
+    color: Colors.white,
+    fontFamily: 'MontserratAlternates-Bold',
+    fontSize: 35,
+    textTransform: 'uppercase'
+  },
+  imgCover: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  cta: {
+    backgroundColor: Colors.yellow[100],
+    paddingVertical: 10,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 7,
+    alignSelf: 'center'
+  },
+  ctaText: {
+    fontFamily: 'Montserrat-SemiBold',
+    textTransform: 'uppercase'
+  },
+  orWrapper: {
+    position: 'relative',
+    marginTop: 15,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 18
+  },
+  orLine: {
+    backgroundColor: Colors.trueGray[200],
+    width: '100%',
+    height: 1
+  },
+  orText: {
+    position: 'absolute',
+    fontSize: 12,
+    fontFamily: 'Montserrat-SemiBold',
+    backgroundColor: Colors.white,
+    paddingHorizontal: 10
+  },
+  textInput: {
+    borderWidth: 0.5,
+    padding: 7,
+    color: Colors.black,
+    borderRadius: 7,
+    marginVertical: 2.5,
+    fontFamily: 'Montserrat-SemiBold'
+  },
+  passInputContainer: {
+    marginVertical: 2.5,
+    position: 'relative',
+    height: 45,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 0.5,
+    borderRadius: 7
+  },
+  showPassword: {
+    position: 'absolute',
+    zIndex: 1,
+    right: 5,
+    padding: 4
+  },
+  passInput: {
+    padding: 7,
+    color: Colors.black,
+    fontFamily: 'Montserrat-SemiBold',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0
+  },
+  isValid: {
+    fontFamily: 'Montserrat-Regular',
+    color: Colors.red[400]
+  }
+})
 
 export default Register

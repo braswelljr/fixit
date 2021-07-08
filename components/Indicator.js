@@ -20,7 +20,7 @@ const Indicator = ({ data, measures, scrollX }) => {
   return (
     <Animated.View
       style={{
-        backgroundColor: Colors.yellow[200],
+        backgroundColor: Colors.yellow[400],
         height: indicatorHeight,
         borderRadius: 50,
         position: 'absolute',

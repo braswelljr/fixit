@@ -8,7 +8,7 @@ const Tab = React.forwardRef(({ item, onItemPress, dataLength }, ref) => {
         ref={ref}
         style={{
           paddingVertical: 10,
-          width: Dimensions.get('screen').width / dataLength
+          width: (Dimensions.get('screen').width - 20) / dataLength
         }}
       >
         <Text
