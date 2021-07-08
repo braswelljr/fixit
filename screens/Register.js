@@ -453,12 +453,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   textInput: {
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: 'normal',
+    fontSize: 14,
     borderWidth: 0.5,
     padding: 7,
     color: Colors.black,
     borderRadius: 7,
-    marginVertical: 2.5,
-    fontFamily: 'Montserrat-SemiBold'
+    marginVertical: 2.5
   },
   passInputContainer: {
     marginVertical: 2.5,
@@ -478,9 +480,11 @@ const styles = StyleSheet.create({
     padding: 4
   },
   passInput: {
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: 'normal',
+    fontSize: 14,
     padding: 7,
     color: Colors.black,
-    fontFamily: 'Montserrat-SemiBold',
     position: 'absolute',
     top: 0,
     bottom: 0,

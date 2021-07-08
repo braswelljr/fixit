@@ -111,7 +111,7 @@ const Login = ({ navigation }) => {
   React.useEffect(() => {
     setTimeout(() => {
       setLoading(false)
-    }, 8000)
+    }, 6000)
   }, [loading])
 
   return (
@@ -205,6 +205,7 @@ const Login = ({ navigation }) => {
                   autoCapitalize="none"
                   onChangeText={e => changeEmailInput(e)}
                   style={styles.textInput}
+                  keyboardType="email-address"
                 />
                 {data.isValidEmail ? null : (
                   <Text style={styles.isValid}>Enter a valid email</Text>
@@ -373,12 +374,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   textInput: {
-    borderWidth: 0.5,
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 14,
+    borderWidth: 1,
     padding: 7,
     color: Colors.black,
     borderRadius: 7,
-    marginVertical: 2.5,
-    fontFamily: 'Montserrat-SemiBold'
+    marginVertical: 2.5
   },
   isValid: {
     fontFamily: 'Montserrat-Regular',
@@ -392,7 +394,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     overflow: 'hidden',
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderRadius: 7
   },
   showPassword: {
@@ -402,9 +404,11 @@ const styles = StyleSheet.create({
     padding: 4
   },
   passInput: {
+    fontFamily: 'Montserrat-Regular',
+    fontWeight: 'normal',
+    fontSize: 14,
     padding: 7,
     color: Colors.black,
-    fontFamily: 'Montserrat-SemiBold',
     position: 'absolute',
     top: 0,
     bottom: 0,
