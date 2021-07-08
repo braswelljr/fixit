@@ -10,9 +10,9 @@ import {
   Keyboard,
   View,
   TouchableOpacity,
-  Alert,
   Platform,
   KeyboardAvoidingView,
+  Alert,
   StyleSheet
 } from 'react-native'
 import Colors from '../assets/color'
@@ -22,20 +22,23 @@ import { usekeyboardHeight } from '../hooks/usekeyboard'
 import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayout'
 import { AuthContext } from '../context/AuthProvider'
 
-const Login = ({ navigation }) => {
+const Register = ({ navigation }) => {
   const scrollContainerRef = React.useRef()
   const keyboardShowRef = React.useRef()
   const [keyboardShowView, setKeyboardShowView] = React.useState(0)
-  const { login, googleLogin } = React.useContext(AuthContext)
+  const { register } = React.useContext(AuthContext)
   const [loading, setLoading] = React.useState(false)
 
   // driver
   const [data, setData] = React.useState({
     email: '', ///^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     password: '',
+    confirmPassword: '',
     isValidEmail: true,
     isValidPassword: true,
-    showPassword: true
+    showPassword: true,
+    showConfirmPassword: true,
+    passwordConfirmed: true
   })
 
   const changeEmailInput = e => {
@@ -63,12 +66,28 @@ const Login = ({ navigation }) => {
       setData({
         ...data,
         password: e,
-        isValidPassword: e.trim().length >= 0 ? true : false
+        isValidPassword: e.trim().length >= 8 ? true : false
       })
     } else {
       setData({
         ...data,
         password: e,
+        isValidPassword: false
+      })
+    }
+  }
+
+  const changeConfirmPasswordInput = e => {
+    if (e.trim().length > 0) {
+      setData({
+        ...data,
+        confirmPassword: e.trim(),
+        passwordConfirmed: data.password === e.trim() ? true : false
+      })
+    } else {
+      setData({
+        ...data,
+        confirmPassword: e,
         isValidPassword: false
       })
     }
@@ -80,11 +99,18 @@ const Login = ({ navigation }) => {
       showPassword: !e
     })
   }
+  const toggleShowConfirmPassword = e => {
+    setData({
+      ...data,
+      showConfirmPassword: !e
+    })
+  }
 
   // keyboard height
   const keyboardHeight = usekeyboardHeight()
 
   // keyboard listener
+
   useIsomorphicLayoutEffect(() => {
     const onKeyboardDidShow = () => {
       scrollContainerRef.current.scrollTo({
@@ -102,6 +128,7 @@ const Login = ({ navigation }) => {
     }
     Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
     Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
+
     return () => {
       Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
       Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
@@ -109,14 +136,26 @@ const Login = ({ navigation }) => {
   }, [keyboardShowView])
 
   React.useEffect(() => {
-    setTimeout(() => {
+    const setLoader = setTimeout(() => {
       setLoading(false)
     }, 6000)
+
+    return () => {
+      clearTimeout(setLoader)
+    }
   }, [loading])
 
   return (
     <ScrollView ref={scrollContainerRef} style={styles.container}>
-      <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          top: Platform.OS == 'ios' ? 50 : 25,
+          left: 15,
+          zIndex: 2
+        }}
+        onPress={() => navigation.goBack()}
+      >
         <FeatherIcon
           name="chevron-left"
           style={{ marginLeft: 10 }}
@@ -130,14 +169,14 @@ const Login = ({ navigation }) => {
         }}
       >
         <ImageBackground
-          source={require('../assets/images/mechanic-i.jpg')}
+          source={require('../assets/images/driver-ii.png')}
           style={{
-            height: Dimensions.get('screen').height * 0.45,
+            height: Dimensions.get('screen').height * 0.35,
             position: 'relative'
           }}
         >
           <View style={styles.imgCover}>
-            <Text style={styles.headerText}>Login</Text>
+            <Text style={styles.headerText}>Register</Text>
           </View>
         </ImageBackground>
       </View>
@@ -145,7 +184,7 @@ const Login = ({ navigation }) => {
       {/* Form Area */}
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior="height"
         ref={keyboardShowRef}
         onLayout={event => {
           setKeyboardShowView(event.nativeEvent.layout.y)
@@ -165,11 +204,11 @@ const Login = ({ navigation }) => {
             style={{
               paddingHorizontal: 30,
               paddingVertical: 5,
-              marginTop: 20
+              marginTop: 15
             }}
           >
             {/* Google Button */}
-            <TouchableOpacity style={styles.cta} onPress={() => googleLogin()}>
+            <TouchableOpacity style={[styles.cta]}>
               <Image
                 source={require('../assets/images/google.png')}
                 style={{ height: 15, width: 15 }}
@@ -182,7 +221,7 @@ const Login = ({ navigation }) => {
                   }
                 ]}
               >
-                Login with Google
+                Register with Google
               </Text>
             </TouchableOpacity>
 
@@ -192,9 +231,13 @@ const Login = ({ navigation }) => {
               <Text style={styles.orText}>or</Text>
             </View>
 
-            <View style={{ marginTop: 20 }}>
+            {/**
+             * Driver or car owners form
+             * Inputs
+             */}
+            <View style={{ marginTop: 15 }}>
               {/*
-               * Username or email field
+               * email field
                */}
               <View style={{ position: 'relative' }}>
                 <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>Email</Text>
@@ -205,7 +248,6 @@ const Login = ({ navigation }) => {
                   autoCapitalize="none"
                   onChangeText={e => changeEmailInput(e)}
                   style={styles.textInput}
-                  keyboardType="email-address"
                 />
                 {data.isValidEmail ? null : (
                   <Text style={styles.isValid}>Enter a valid email</Text>
@@ -214,7 +256,7 @@ const Login = ({ navigation }) => {
               {/*
                *Password Field
                */}
-              <View style={{ marginTop: 20 }}>
+              <View style={{ marginTop: 15 }}>
                 <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                   Password
                 </Text>
@@ -230,7 +272,7 @@ const Login = ({ navigation }) => {
                   </TouchableOpacity>
                   <TextInput
                     value={data.password}
-                    placeholder={data.showPassword ? '********' : '&%gr4xcw'}
+                    placeholder={data.showPassword ? '********' : 'xc5667%%'}
                     placeholderTextColor={Colors.trueGray[400]}
                     autoCapitalize="none"
                     secureTextEntry={data.showPassword}
@@ -240,7 +282,49 @@ const Login = ({ navigation }) => {
                 </View>
                 {data.isValidPassword ? null : (
                   <Text style={styles.isValid}>
-                    Password field must not be empty
+                    Password length must be 8 or more
+                  </Text>
+                )}
+              </View>
+              {/*
+               *Confirm Password Field
+               */}
+              <View style={{ marginTop: 15 }}>
+                <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
+                  Confirm Password
+                </Text>
+                <View style={styles.passInputContainer}>
+                  <TouchableOpacity
+                    style={styles.showPassword}
+                    onPress={() => {
+                      toggleShowConfirmPassword(data.showConfirmPassword)
+                    }}
+                  >
+                    <MaterialIcon
+                      name={data.showConfirmPassword ? 'eye' : 'eye-off'}
+                      size={25}
+                    />
+                  </TouchableOpacity>
+                  <TextInput
+                    value={data.confirmPassword}
+                    placeholder={
+                      data.showConfirmPassword ? '********' : 'xc5667%%'
+                    }
+                    placeholderTextColor={Colors.trueGray[400]}
+                    autoCapitalize="none"
+                    secureTextEntry={data.showConfirmPassword}
+                    onChangeText={e => changeConfirmPasswordInput(e)}
+                    style={styles.passInput}
+                  />
+                </View>
+                {data.passwordConfirmed ? null : (
+                  <Text
+                    style={{
+                      fontFamily: 'Montserrat-Regular',
+                      color: Colors.red[400]
+                    }}
+                  >
+                    Passwords don't match
                   </Text>
                 )}
               </View>
@@ -250,19 +334,24 @@ const Login = ({ navigation }) => {
               <TouchableOpacity
                 style={[styles.cta, { marginTop: 15 }]}
                 onPress={() => {
-                  if (data.email == '' && data.password === '') {
-                    Alert.alert('', 'Empty Fields', [{ text: 'OK' }])
+                  if (
+                    data.email == '' &&
+                    data.password === '' &&
+                    data.confirmPassword === ''
+                  ) {
+                    Alert.alert('Empty Fields', [{ text: 'OK' }])
                   } else {
                     if (
                       data.isValidEmail == true &&
                       data.isValidPassword == true &&
+                      data.passwordConfirmed == true &&
                       data.email !== '' &&
                       data.password !== ''
                     ) {
-                      login(data.email, data.password)
+                      register(data.email, data.password)
                       setLoading(true)
                     } else {
-                      Alert.alert('', 'Authentication Error!', [{ text: 'OK' }])
+                      Alert.alert('Authentication Error!', [{ text: 'OK' }])
                     }
                   }
                 }}
@@ -270,7 +359,7 @@ const Login = ({ navigation }) => {
                 {loading ? (
                   <ActivityIndicator size="small" color={Colors.sky[900]} />
                 ) : (
-                  <Text style={styles.ctaText}>Login</Text>
+                  <Text style={styles.ctaText}>Register</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -282,21 +371,21 @@ const Login = ({ navigation }) => {
          */}
         <View style={{ paddingHorizontal: 30, paddingBottom: 10 }}>
           {/* or */}
-          <View style={styles.orWrapper}>
+          <View style={[styles.orWrapper]}>
             <View style={styles.orLine} />
             <Text style={styles.orText}>or</Text>
           </View>
-          {/* Register */}
+          {/* Login */}
           <TouchableOpacity
             style={[
               styles.cta,
               {
-                marginTop: 10
+                marginTop: 15
               }
             ]}
-            onPress={() => navigation.navigate('Register')}
+            onPress={() => navigation.navigate('Login')}
           >
-            <Text style={styles.ctaText}>Register</Text>
+            <Text style={styles.ctaText}>Login</Text>
           </TouchableOpacity>
         </View>
 
@@ -322,12 +411,6 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratAlternates-Bold',
     fontSize: 35,
     textTransform: 'uppercase'
-  },
-  back: {
-    position: 'absolute',
-    top: Platform.OS == 'ios' ? 50 : 25,
-    left: 15,
-    zIndex: 2
   },
   imgCover: {
     position: 'absolute',
@@ -375,16 +458,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontFamily: 'Montserrat-Regular',
+    fontWeight: 'normal',
     fontSize: 14,
-    borderWidth: 1,
+    borderWidth: 0.5,
     padding: 7,
     color: Colors.black,
     borderRadius: 7,
     marginVertical: 2.5
-  },
-  isValid: {
-    fontFamily: 'Montserrat-Regular',
-    color: Colors.red[400]
   },
   passInputContainer: {
     marginVertical: 2.5,
@@ -394,7 +474,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     overflow: 'hidden',
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderRadius: 7
   },
   showPassword: {
@@ -414,7 +494,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0
+  },
+  isValid: {
+    fontFamily: 'Montserrat-Regular',
+    color: Colors.red[400]
   }
 })
 
-export default Login
+export default Register

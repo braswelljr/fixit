@@ -4,9 +4,9 @@
  */
 import { AppRegistry } from 'react-native'
 import React from 'react'
-import App from './App'
+import App from './src/App'
 import { name as appName } from './app.json'
-import { AuthProvider } from './context/AuthProvider'
+import { AuthProvider } from './src/context/AuthProvider'
 
 const index = () => (
   <AuthProvider>
