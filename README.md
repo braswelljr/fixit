@@ -1,4 +1,4 @@
-# ![Fixit](assets/images/fixit-light.png)
+# ![Fixit](src/assets/images/fixit-light.png)
 
 Fixit is an automotive assistance application which helps users to check their automobiles and machinery to help in the proper functions. `React-native` is the technology used in developing this app.
 
