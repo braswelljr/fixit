@@ -19,9 +19,9 @@ export const HorizontalAnimation = {
           {
             scale: next
               ? next.progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0.9]
-              })
+                  inputRange: [0, 1],
+                  outputRange: [1, 0.9]
+                })
               : 1
           }
         ],
@@ -51,9 +51,9 @@ export const VerticalSlideAnimation = {
           {
             scale: next
               ? next.progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0.9]
-              })
+                  inputRange: [0, 1],
+                  outputRange: [1, 0.9]
+                })
               : 1
           }
         ],
@@ -94,9 +94,9 @@ export const SlideXAnimations = {
           {
             scale: next
               ? next.progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0.9]
-              })
+                  inputRange: [0, 1],
+                  outputRange: [1, 0.9]
+                })
               : 1
           },
           { perspective: 1000 }
@@ -123,6 +123,6 @@ export const toAnime = ({ ref, toValue, duration, useNativeDriver }) => {
   Animated.timing(ref, {
     toValue: toValue ?? 0,
     duration: duration ?? 500,
-    useNativeDriver: useNativeDriver ?? true // Add This line
+    useNativeDriver: useNativeDriver ?? true
   }).start()
 }
