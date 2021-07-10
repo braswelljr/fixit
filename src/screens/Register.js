@@ -138,7 +138,7 @@ const Register = ({ navigation }) => {
   React.useEffect(() => {
     const setLoader = setTimeout(() => {
       setLoading(false)
-    }, 6000)
+    }, 10000)
 
     return () => {
       clearTimeout(setLoader)
@@ -163,23 +163,17 @@ const Register = ({ navigation }) => {
           size={25}
         />
       </TouchableOpacity>
-      <View
+      <ImageBackground
+        source={require('../assets/images/driver-ii.png')}
         style={{
-          overflow: 'hidden'
+          height: Dimensions.get('screen').height * 0.35,
+          position: 'relative'
         }}
       >
-        <ImageBackground
-          source={require('../assets/images/driver-ii.png')}
-          style={{
-            height: Dimensions.get('screen').height * 0.35,
-            position: 'relative'
-          }}
-        >
-          <View style={styles.imgCover}>
-            <Text style={styles.headerText}>Register</Text>
-          </View>
-        </ImageBackground>
-      </View>
+        <View style={styles.imgCover}>
+          <Text style={styles.headerText}>Register</Text>
+        </View>
+      </ImageBackground>
 
       {/* Form Area */}
 

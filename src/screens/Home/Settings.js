@@ -9,8 +9,8 @@ import {
 import Colors from '../../assets/color'
 import { AuthContext } from '../../context/AuthProvider'
 
-const Home = ({ navigation, route }) => {
-  const { user, logout } = React.useContext(AuthContext)
+const Home = () => {
+  const { logout } = React.useContext(AuthContext)
   return (
     <View style={styles.container}>
       <Text>Settings Page</Text>
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingVertical: 10,
-    backgroundColor: Colors.yellow[300],
+    backgroundColor: Colors.yellow[200],
     borderRadius: 10
   },
   ctaText: {

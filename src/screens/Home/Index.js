@@ -1,14 +1,41 @@
 import React from 'react'
-import { View, Dimensions, Text, StyleSheet } from 'react-native'
+import {
+  View,
+  Dimensions,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform
+} from 'react-native'
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import IonIcons from 'react-native-vector-icons/Ionicons'
 import Colors from '../../assets/color'
-import { AuthContext } from '../../context/AuthProvider'
 
-const Home = ({ navigation, route }) => {
-  const { user, logout } = React.useContext(AuthContext)
-
+const Home = ({ search, showSearch }) => {
   return (
     <View style={styles.container}>
-      <Text>Index Page</Text>
+      <TouchableOpacity
+        style={styles.searchbar}
+        onPress={() => showSearch(true)}
+      >
+        <IonIcons
+          name="location-sharp"
+          size={20}
+          color={Colors.trueGray[700]}
+        />
+        <Text style={styles.searchbarText}>Search here</Text>
+      </TouchableOpacity>
+      {/* Maps */}
+      <MapView
+        style={styles.map}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : ''}
+        region={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121
+        }}
+      ></MapView>
     </View>
   )
 }
@@ -20,13 +47,36 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width,
     minHeight: Dimensions.get('screen').height
   },
+  searchbar: {
+    position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    top: Platform.OS == 'ios' ? 45 : 20,
+    left: 10,
+    right: 10,
+    backgroundColor: Colors.yellow[200],
+    borderRadius: 30,
+    zIndex: 1
+  },
+  searchbarText: {
+    fontFamily: 'MontserratAlternates-SemiBold',
+    fontSize: 16,
+    marginLeft: 15
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height
+  },
   cta: {
     paddingHorizontal: 40,
     marginHorizontal: 30,
     flexDirection: 'row',
     justifyContent: 'center',
     paddingVertical: 10,
-    backgroundColor: Colors.yellow[300],
+    backgroundColor: Colors.yellow[100],
     borderRadius: 10
   },
   ctaText: {

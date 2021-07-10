@@ -111,7 +111,7 @@ const Login = ({ navigation }) => {
   React.useEffect(() => {
     const setLoader = setTimeout(() => {
       setLoading(false)
-    }, 6000)
+    }, 10000)
 
     return () => {
       clearTimeout(setLoader)
@@ -128,23 +128,17 @@ const Login = ({ navigation }) => {
           size={25}
         />
       </TouchableOpacity>
-      <View
+      <ImageBackground
+        source={require('../assets/images/mechanic-i.jpg')}
         style={{
-          overflow: 'hidden'
+          height: Dimensions.get('screen').height * 0.45,
+          position: 'relative'
         }}
       >
-        <ImageBackground
-          source={require('../assets/images/mechanic-i.jpg')}
-          style={{
-            height: Dimensions.get('screen').height * 0.45,
-            position: 'relative'
-          }}
-        >
-          <View style={styles.imgCover}>
-            <Text style={styles.headerText}>Login</Text>
-          </View>
-        </ImageBackground>
-      </View>
+        <View style={styles.imgCover}>
+          <Text style={styles.headerText}>Login</Text>
+        </View>
+      </ImageBackground>
 
       {/* Form Area */}
 

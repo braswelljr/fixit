@@ -33,25 +33,19 @@ export const AuthProvider = ({ children }) => {
               .signInWithEmailAndPassword(email, password)
               .then(() => {})
               .catch(error => {
-                switch (error.code) {
-                  case 'auth/invalid-email':
-                    ToastAndroid.show('Ivalid Email!', ToastAndroid.LONG)
-                    break
-                  case 'auth/user-disabled':
-                    ToastAndroid.show('User disabled!', ToastAndroid.LONG)
-                    break
-                  case 'auth/user-not-found':
-                    ToastAndroid.show("Email doesn't exist", ToastAndroid.LONG)
-                    break
-                  case 'auth/wrong-password':
-                    ToastAndroid.show('Wrong password!', ToastAndroid.LONG)
-                    break
-                  default:
-                    ToastAndroid.show(
-                      'Something happened could not sign you in!',
-                      ToastAndroid.LONG
-                    )
-                }
+                if (error.code == 'auth/invalid-email')
+                  ToastAndroid.show('Ivalid Email!', ToastAndroid.SHORT)
+                else if (error.code == 'auth/user-disabled')
+                  ToastAndroid.show('User disabled!', ToastAndroid.SHORT)
+                else if (error.code == 'auth/user-not-found')
+                  ToastAndroid.show("Email doesn't exist", ToastAndroid.SHORT)
+                else if (error.code == 'auth/wrong-password')
+                  ToastAndroid.show('Wrong password!', ToastAndroid.SHORT)
+                else
+                  ToastAndroid.show(
+                    'Something happened could not sign you in!',
+                    ToastAndroid.SHORT
+                  )
               })
           } catch (e) {
             console.log(e)
@@ -113,32 +107,31 @@ export const AuthProvider = ({ children }) => {
               //we need to catch the whole sign up process if it fails too.
               .catch(error => {
                 console.log('Something went wrong with sign up: ', error)
-                switch (error.code) {
-                  case 'auth/invalid-email':
-                    ToastAndroid.show('Ivalid Email!', ToastAndroid.LONG)
-                    break
-                  case 'auth/email-already-in-use':
-                    ToastAndroid.show(
-                      'Email already in use !',
-                      ToastAndroid.LONG
-                    )
-                    break
-                  case 'auth/operation-not-allowed':
-                    ToastAndroid.show(
-                      'Operation not allowed!',
-                      ToastAndroid.LONG
-                    )
-                    break
-                  default:
-                    ToastAndroid.show(
-                      'Something happened could not sign you up!',
-                      ToastAndroid.LONG
-                    )
-                    break
-                }
+
+                if (error.code == 'auth/invalid-email')
+                  ToastAndroid.show('Ivalid Email!', ToastAndroid.SHORT)
+                else if (error.code == 'auth/email-already-in-use')
+                  ToastAndroid.show(
+                    'Email already in use !',
+                    ToastAndroid.SHORT
+                  )
+                else if (error.code == 'auth/operation-not-allowed')
+                  ToastAndroid.show(
+                    'Operation not allowed!',
+                    ToastAndroid.SHORT
+                  )
+                else
+                  ToastAndroid.show(
+                    'Something happened could not sign you up!',
+                    ToastAndroid.SHORT
+                  )
               })
           } catch (e) {
             console.log(e)
+            ToastAndroid.show(
+              'Something happened could not sign you up!',
+              ToastAndroid.SHORT
+            )
           }
         },
         logout: async () => {
@@ -146,6 +139,10 @@ export const AuthProvider = ({ children }) => {
             await auth().signOut()
           } catch (e) {
             console.log('Something went wrong with logout: ', e)
+            ToastAndroid.show(
+              'Something happened could not log you out!',
+              ToastAndroid.SHORT
+            )
           }
         }
       }}

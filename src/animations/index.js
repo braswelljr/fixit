@@ -1,3 +1,4 @@
+import { Animated, Easing } from 'react-native'
 import {
   TransitionSpecs,
   HeaderStyleInterpolators
@@ -18,12 +19,18 @@ export const HorizontalAnimation = {
           {
             scale: next
               ? next.progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 0.9]
-                })
+                inputRange: [0, 1],
+                outputRange: [1, 0.9]
+              })
               : 1
           }
-        ]
+        ],
+        transitionSpec: {
+          duration: 1000,
+          easing: Easing.out(Easing.poly(4)),
+          timing: Animated.timing,
+          useNativeDriver: true
+        }
       }
     }
   }
@@ -44,12 +51,18 @@ export const VerticalSlideAnimation = {
           {
             scale: next
               ? next.progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 0.9]
-                })
+                inputRange: [0, 1],
+                outputRange: [1, 0.9]
+              })
               : 1
           }
-        ]
+        ],
+        transitionSpec: {
+          duration: 1000,
+          easing: Easing.out(Easing.poly(4)),
+          timing: Animated.timing,
+          useNativeDriver: true
+        }
       }
     }
   }
@@ -81,13 +94,19 @@ export const SlideXAnimations = {
           {
             scale: next
               ? next.progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 0.9]
-                })
+                inputRange: [0, 1],
+                outputRange: [1, 0.9]
+              })
               : 1
           },
           { perspective: 1000 }
-        ]
+        ],
+        transitionSpec: {
+          duration: 1000,
+          easing: Easing.out(Easing.poly(4)),
+          timing: Animated.timing,
+          useNativeDriver: true
+        }
       },
       overlayStyle: {
         opacity: current.progress.interpolate({
@@ -97,4 +116,13 @@ export const SlideXAnimations = {
       }
     }
   }
+}
+
+export const toAnime = ({ ref, toValue, duration, useNativeDriver }) => {
+  // Will change translateY value to 0 in 0.5 seconds
+  Animated.timing(ref, {
+    toValue: toValue ?? 0,
+    duration: duration ?? 500,
+    useNativeDriver: useNativeDriver ?? true // Add This line
+  }).start()
 }

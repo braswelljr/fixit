@@ -10,7 +10,7 @@ import { AuthContext } from './context/AuthProvider'
 import AuthStack from './navigation/AuthStack'
 import AppStack from './navigation/AppStack'
 import { NavigationContainer } from '@react-navigation/native'
-import Colors from './assets/color'
+import Colors from 'assets/color'
 
 const App = () => {
   const { user, setUser } = React.useContext(AuthContext)
