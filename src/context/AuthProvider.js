@@ -11,6 +11,7 @@ export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [USER, setUSER] = useState({})
 
   // Google signin verification
   useEffect(() => {
@@ -22,11 +23,34 @@ export const AuthProvider = ({ children }) => {
     })
   }, [])
 
+  React.useEffect(() => {
+    if (user !== null) {
+      try {
+        firestore()
+          .collection('users')
+          .doc(user.uid)
+          .get({ source: 'default' })
+          .then(doc => {
+            setUSER({ uid: user.uid, metadata: user.metadata, ...doc._data })
+          })
+          .catch(error => {
+            console.log(error)
+            ToastAndroid.show('Error occured while fetching user data')
+          })
+      } catch (error) {
+        console.log('Something happened', error)
+        ToastAndroid.show('Something Happened')
+      }
+    }
+  }, [USER, user])
+
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
+        USER,
+        setUSER,
         login: async (email, password) => {
           try {
             await auth()

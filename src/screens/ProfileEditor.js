@@ -2,22 +2,34 @@ import React from 'react'
 import {
   View,
   Text,
+  Image,
   Dimensions,
   TouchableOpacity,
   StyleSheet,
   Platform
 } from 'react-native'
-import Colors from '../../assets/color'
-import { AuthContext } from '../../context/AuthProvider'
+import Colors from '../assets/color'
+import { AuthContext } from '../context/AuthProvider'
+import FeatherIcon from 'react-native-vector-icons/Feather'
 
-const Home = () => {
-  const { logout } = React.useContext(AuthContext)
+const ProfileEditor = ({ navigation }) => {
+  const { USER } = React.useContext(AuthContext)
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
-      <TouchableOpacity style={styles.cta} onPress={() => logout()}>
-        <Text style={styles.ctaText}>Logout</Text>
+      <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
+        <FeatherIcon
+          name="chevron-left"
+          style={{ marginLeft: 10 }}
+          color={Colors.trueGray[800]}
+          size={25}
+        />
       </TouchableOpacity>
+      <Text style={styles.header}>Edit Profile</Text>
+      <View style={styles.content}>
+        <View></View>
+        <Text>Content</Text>
+      </View>
     </View>
   )
 }
@@ -29,6 +41,12 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width,
     minHeight: Dimensions.get('screen').height,
     overflow: 'hidden'
+  },
+  back: {
+    position: 'absolute',
+    top: Platform.OS == 'ios' ? 50 : 25,
+    left: 15,
+    zIndex: 2
   },
   header: {
     textAlign: 'center',
@@ -50,7 +68,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     color: Colors.black,
     textTransform: 'uppercase'
+  },
+  content: {
+    marginVertical: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 10
   }
 })
 
-export default Home
+export default ProfileEditor

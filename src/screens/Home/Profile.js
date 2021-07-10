@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   View,
   Text,
@@ -7,16 +7,19 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Platform
+  Platform,
+  ToastAndroid
 } from 'react-native'
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import FeatherIcons from 'react-native-vector-icons/Feather'
 import Colors from '../../assets/color'
 import { AuthContext } from '../../context/AuthProvider'
 import firestore from '@react-native-firebase/firestore'
+import { useNavigation } from '@react-navigation/native'
 
 const Home = ({ picker, showPicker }) => {
-  const { user } = useContext(AuthContext)
+  const navigation = useNavigation()
+  const { USER } = useContext(AuthContext)
 
   return (
     <>
@@ -30,18 +33,26 @@ const Home = ({ picker, showPicker }) => {
           </View>
         </ImageBackground>
         <View style={styles.avatar}>
-          <>
-            <Image
-              source={require('../../assets/images/avatar.jpg')}
-              style={styles.avatarImg}
-            />
-            <TouchableOpacity
-              style={styles.camera}
-              onPress={() => showPicker(!picker)}
-            >
-              <IonIcons name="ios-camera" size={35} style={styles.cameraIcon} />
-            </TouchableOpacity>
-          </>
+          {USER.avatar === null ? (
+            <>
+              <Image
+                source={require('../../assets/images/avatar.jpg')}
+                style={styles.avatarImg}
+              />
+              <TouchableOpacity
+                style={styles.camera}
+                onPress={() => showPicker(!picker)}
+              >
+                <IonIcons
+                  name="ios-camera"
+                  size={35}
+                  style={styles.cameraIcon}
+                />
+              </TouchableOpacity>
+            </>
+          ) : (
+            <Image source={{ uri: USER.avatar }} style={styles.avatarImg} />
+          )}
         </View>
         <View style={styles.content}>
           <TouchableOpacity
@@ -51,16 +62,37 @@ const Home = ({ picker, showPicker }) => {
                 width: '45%',
                 alignSelf: 'flex-end',
 
-                marginTop: 40,
-                marginRight: 15
+                marginTop: 80,
+                marginRight: 20
               }
             ]}
+            onPress={() => navigation.navigate('ProfileEditor')}
           >
             <FeatherIcons name="bookmark" size={15} style={styles.cameraIcon} />
             <Text style={[styles.ctaText, { fontSize: 12, marginLeft: 10 }]}>
               Edit Profile
             </Text>
           </TouchableOpacity>
+          {/* Profile */}
+          <View style={styles.profile}>
+            {/* email */}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <FeatherIcons
+                name="mail"
+                size={18}
+                color={Colors.trueGray[700]}
+              />
+              <Text
+                style={{
+                  fontFamily: 'Montserrat-Regular',
+                  marginLeft: 10,
+                  fontSize: 16
+                }}
+              >
+                {USER.email}
+              </Text>
+            </View>
+          </View>
         </View>
       </View>
     </>
@@ -77,7 +109,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: Dimensions.get('screen').height * 0.5
+    height: Dimensions.get('screen').height * 0.6
   },
   headerCover: {
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -88,7 +120,8 @@ const styles = StyleSheet.create({
     right: 0
   },
   topic: {
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'MontserratAlternates-Bold',
+    textTransform: 'uppercase',
     fontSize: 40,
     color: Colors.white,
     textAlign: 'center',
@@ -99,9 +132,8 @@ const styles = StyleSheet.create({
     width: 150,
     position: 'relative',
     alignSelf: 'flex-start',
-    top: '-12.5%',
+    top: '-27.5%',
     zIndex: 1,
-    marginLeft: 10,
     overflow: 'hidden'
   },
   avatarImg: {
@@ -129,10 +161,10 @@ const styles = StyleSheet.create({
   content: {
     position: 'absolute',
     width: '100%',
-    height: '55%',
+    height: '65%',
     backgroundColor: Colors.trueGray[50],
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderTopLeftRadius: 65,
+    borderTopRightRadius: 50,
     bottom: 0
   },
   cta: {
@@ -148,6 +180,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     color: Colors.black,
     textTransform: 'uppercase'
+  },
+  profile: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    marginTop: 20,
+    backgroundColor: Colors.yellow[50]
   }
 })
 
