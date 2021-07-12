@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import {
   View,
   Text,
@@ -7,14 +7,12 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Platform,
-  ToastAndroid
+  Platform
 } from 'react-native'
 import IonIcons from 'react-native-vector-icons/Ionicons'
 import FeatherIcons from 'react-native-vector-icons/Feather'
-import Colors from '../../assets/color'
-import { AuthContext } from '../../context/AuthProvider'
-import firestore from '@react-native-firebase/firestore'
+import Colors from '../assets/color'
+import { AuthContext } from '../context/AuthProvider'
 import { useNavigation } from '@react-navigation/native'
 
 const Home = ({ picker, showPicker }) => {
@@ -26,7 +24,7 @@ const Home = ({ picker, showPicker }) => {
       <View style={styles.container}>
         <ImageBackground
           style={styles.header}
-          source={require('../../assets/images/mechanic-ii.jpg')}
+          source={require('../assets/images/mechanic-ii.jpg')}
         >
           <View style={styles.headerCover}>
             <Text style={styles.topic}>Profile</Text>
@@ -36,7 +34,7 @@ const Home = ({ picker, showPicker }) => {
           {USER.avatar === null ? (
             <>
               <Image
-                source={require('../../assets/images/avatar.jpg')}
+                source={require('../assets/images/avatar.jpg')}
                 style={styles.avatarImg}
               />
               <TouchableOpacity
@@ -92,6 +90,8 @@ const Home = ({ picker, showPicker }) => {
                 {USER.email}
               </Text>
             </View>
+
+            <View></View>
           </View>
         </View>
       </View>

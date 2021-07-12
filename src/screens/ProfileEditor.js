@@ -2,7 +2,6 @@ import React from 'react'
 import {
   View,
   Text,
-  Image,
   Dimensions,
   TouchableOpacity,
   StyleSheet,

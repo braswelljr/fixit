@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Platform
 } from 'react-native'
-import Colors from '../../assets/color'
-import { AuthContext } from '../../context/AuthProvider'
+import Colors from '../assets/color'
+import { AuthContext } from '../context/AuthProvider'
 
 const Home = () => {
   const { logout } = React.useContext(AuthContext)

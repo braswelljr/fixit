@@ -9,9 +9,9 @@ import {
 } from 'react-native'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import IonIcons from 'react-native-vector-icons/Ionicons'
-import Colors from '../../assets/color'
+import Colors from '../assets/color'
 
-const Home = ({ search, showSearch }) => {
+const Maps = ({ showSearch }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Home
+export default Maps

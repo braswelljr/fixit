@@ -4,9 +4,9 @@ import * as Animatable from 'react-native-animatable'
 import Colors from '../assets/color'
 import Search from '../components/Search'
 import Tabs from '../components/Tabs'
-import Index from './Home/Index'
-import Profile from './Home/Profile'
-import Settings from './Home/Settings'
+import Maps from './Maps'
+import Profile from './Profile'
+import Settings from './Settings'
 import ImagePicker from '../components/ImagePicker'
 
 const Home = () => {
@@ -64,7 +64,7 @@ const Home = () => {
         )}
         bounces={false}
       >
-        <Index search={search} showSearch={showSearch} />
+        <Maps search={search} showSearch={showSearch} />
         <Profile picker={picker} showPicker={showPicker} />
         <Settings />
       </Animated.ScrollView>
