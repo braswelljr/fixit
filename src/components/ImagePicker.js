@@ -1,11 +1,14 @@
-import React, { useRef } from 'react'
+import React, { useRef, useContext } from 'react'
 import { StyleSheet, TouchableOpacity, Text, Animated } from 'react-native'
 import Colors from '../assets/color'
-import ImageCropPicker from 'react-native-image-crop-picker'
 import { toAnime } from '../animations'
+import { selectFromLibrary, takePhoto } from '../utils/uploadImage'
+import { AuthContext } from '../context/AuthProvider'
 
 const ImagePicker = ({ picker, showPicker }) => {
   const translateY = useRef(new Animated.Value(0)).current
+  const { USER } = useContext(AuthContext)
+  const uid = USER.uid
 
   if (picker === true)
     toAnime({
@@ -19,38 +22,6 @@ const ImagePicker = ({ picker, showPicker }) => {
       toValue: 150,
       duration: 300
     })
-
-  const selectFromLibrary = () => {
-    ImageCropPicker.openPicker({
-      width: 400,
-      height: 400,
-      cropping: true
-    })
-      .then(image => {
-        console.log(image)
-        showPicker(false)
-      })
-      .catch(error => {
-        console.log('Something happened : ', error)
-        showPicker(false)
-      })
-  }
-
-  const takePhoto = () => {
-    ImageCropPicker.openCamera({
-      width: 400,
-      height: 400,
-      cropping: true
-    })
-      .then(image => {
-        console.log(image)
-        showPicker(false)
-      })
-      .catch(error => {
-        console.log('Something happened : ', error)
-        showPicker(false)
-      })
-  }
 
   return (
     <>
@@ -73,12 +44,15 @@ const ImagePicker = ({ picker, showPicker }) => {
           }
         ]}
       >
-        <TouchableOpacity style={styles.cta} onPress={() => takePhoto()}>
+        <TouchableOpacity
+          style={styles.cta}
+          onPress={() => takePhoto(showPicker, uid)}
+        >
           <Text style={styles.ctaText}>Take Photo</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.cta, { marginTop: 20 }]}
-          onPress={() => selectFromLibrary()}
+          onPress={() => selectFromLibrary(showPicker, uid)}
         >
           <Text style={styles.ctaText}>Choose from Gallery</Text>
         </TouchableOpacity>

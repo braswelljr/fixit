@@ -1,7 +1,8 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   View,
   Text,
+  ScrollView,
   Dimensions,
   ImageBackground,
   TouchableOpacity,
@@ -14,13 +15,16 @@ import FeatherIcons from 'react-native-vector-icons/Feather'
 import Colors from '../assets/color'
 import { AuthContext } from '../context/AuthProvider'
 import { useNavigation } from '@react-navigation/native'
+import ImagePicker from '../components/ImagePicker'
 
-const Home = ({ picker, showPicker }) => {
+const Profile = () => {
+  const [picker, showPicker] = useState(false)
   const navigation = useNavigation()
   const { USER } = useContext(AuthContext)
 
   return (
     <>
+      <ImagePicker picker={picker} showPicker={showPicker} />
       <View style={styles.container}>
         <ImageBackground
           style={styles.header}
@@ -187,7 +191,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginTop: 20,
     backgroundColor: Colors.yellow[50]
+  },
+  updateCard: {
+    marginVertical: 15,
+    marginHorizontal: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    backgroundColor: Colors.sky[50],
+    borderRadius: 20
+  },
+  updateCardtext: {
+    fontFamily: 'MontserratAlternates-Medium',
+    fontSize: 16
+  },
+  name: {
+    fontFamily: 'MontserratAlternates-SemiBold',
+    fontSize: 16
+  },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10
   }
 })
 
-export default Home
+export default Profile

@@ -129,10 +129,10 @@ const Register = ({ navigation }) => {
     Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
     Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
 
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
-      Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
-    }
+    // return () => {
+    //   Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
+    //   Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
+    // }
   }, [keyboardShowView])
 
   React.useEffect(() => {

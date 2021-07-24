@@ -1,95 +1,96 @@
-import React, { useCallback, useRef, useState, createRef } from 'react'
-import { View, Animated, Dimensions, StyleSheet } from 'react-native'
-import * as Animatable from 'react-native-animatable'
+import React, { useState, useContext } from 'react'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  Dimensions,
+  StyleSheet
+} from 'react-native'
 import Colors from '../assets/color'
 import Search from '../components/Search'
-import Tabs from '../components/Tabs'
-import Maps from './Maps'
-import Profile from './Profile'
-import Settings from './Settings'
-import ImagePicker from '../components/ImagePicker'
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import IonIcons from 'react-native-vector-icons/Ionicons'
+import { AuthContext } from '../context/AuthProvider'
 
 const Home = () => {
-  const scrollX = useRef(new Animated.Value(0)).current
-  const ScrollViewref = useRef()
   const [search, showSearch] = useState(false)
-  const [picker, showPicker] = useState(false)
-  const data = [
-    {
-      title: 'Home',
-      ref: createRef()
-    },
-    {
-      title: 'Profile',
-      ref: createRef()
-    },
-    {
-      title: 'Settings',
-      ref: createRef()
-    }
-  ]
-  const onItemPress = useCallback(itemIndex => {
-    ScrollViewref?.current?.scrollTo({
-      x: itemIndex * Dimensions.get('screen').width,
-      y: 0,
-      animated: true
-    })
-  }, [])
+  const { USER } = useContext(AuthContext)
 
   return (
-    <Animatable.View
-      style={styles.container}
-      animation="slideInRight"
-      contentInsetAdjustmentBehavior="automatic"
-      duration={500}
-      easing="ease"
-      useNativeDriver={true}
-    >
+    <>
       {search == true && <Search search={search} showSearch={showSearch} />}
-      {<ImagePicker picker={picker} showPicker={showPicker} />}
-      <Animated.ScrollView
-        ref={ScrollViewref}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: { x: scrollX }
-              }
-            }
-          ],
-          { useNativeDriver: false }
-        )}
-        bounces={false}
-      >
-        <Maps search={search} showSearch={showSearch} />
-        <Profile picker={picker} showPicker={showPicker} />
-        <Settings />
-      </Animated.ScrollView>
-      {/* Tabs */}
-      <View style={styles.slab}>
-        <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.searchbar}
+          onPress={() => showSearch(true)}
+        >
+          <IonIcons
+            name="location-sharp"
+            size={20}
+            color={Colors.trueGray[700]}
+          />
+          <Text style={styles.searchbarText}>Search here</Text>
+        </TouchableOpacity>
+        {/* Maps */}
+        <MapView
+          style={styles.map}
+          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : ''}
+          region={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.0121
+          }}
+        ></MapView>
       </View>
-    </Animatable.View>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
+    width: Dimensions.get('screen').width,
+    minHeight: Dimensions.get('screen').height
   },
-  slab: {
+  searchbar: {
     position: 'absolute',
-    margin: 10,
-    zIndex: 1,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderRadius: 20,
-    backgroundColor: Colors.yellow[50]
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    top: Platform.OS == 'ios' ? 45 : 20,
+    left: 10,
+    right: 10,
+    backgroundColor: Colors.yellow[200],
+    borderRadius: 30,
+    zIndex: 1
+  },
+  searchbarText: {
+    fontFamily: 'MontserratAlternates-SemiBold',
+    fontSize: 16,
+    marginLeft: 15
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height
+  },
+  cta: {
+    paddingHorizontal: 40,
+    marginHorizontal: 30,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    backgroundColor: Colors.yellow[100],
+    borderRadius: 10
+  },
+  ctaText: {
+    fontFamily: 'Montserrat-Bold',
+    color: Colors.black,
+    textTransform: 'uppercase'
   }
 })
 

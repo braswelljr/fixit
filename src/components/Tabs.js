@@ -58,3 +58,65 @@ const Tabs = ({ data, style, scrollX, onItemPress }) => {
 }
 
 export default Tabs
+
+{
+  /* <Animatable.View */
+}
+//   style={styles.container}
+//   animation="slideInRight"
+//   contentInsetAdjustmentBehavior="automatic"
+//   duration={500}
+//   easing="ease"
+//   useNativeDriver={true}
+// >
+//   <Animated.ScrollView
+//     ref={ScrollViewref}
+//     horizontal
+//     showsHorizontalScrollIndicator={false}
+//     pagingEnabled
+//     onScroll={Animated.event(
+//       [
+//         {
+//           nativeEvent: {
+//             contentOffset: { x: scrollX }
+//           }
+//         }
+//       ],
+//       { useNativeDriver: false }
+//     )}
+//     bounces={false}
+//   >
+//     <Maps search={search} showSearch={showSearch} />
+//     <Profile picker={picker} showPicker={showPicker} />
+//     <Settings />
+//   </Animated.ScrollView>
+//   {/* Tabs */}
+//   <View style={styles.slab}>
+//     <Tabs data={data} scrollX={scrollX} onItemPress={onItemPress} />
+//   </View>
+// </Animatable.View>
+
+// const onItemPress = useCallback(itemIndex => {
+//   ScrollViewref?.current?.scrollTo({
+//     x: itemIndex * Dimensions.get('screen').width,
+//     y: 0,
+//     animated: true
+//   })
+// }, [])
+
+// const data = [
+//   {
+//     title: 'Home',
+//     ref: createRef()
+//   },
+//   {
+//     title: 'Profile',
+//     ref: createRef()
+//   },
+//   {
+//     title: 'Settings',
+//     ref: createRef()
+//   }
+// ]
+// const scrollX = useRef(new Animated.Value(0)).current
+//   const ScrollViewref = useRef()

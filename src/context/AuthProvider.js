@@ -112,11 +112,11 @@ export const AuthProvider = ({ children }) => {
                   .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
-                    firstname: '',
-                    lastname: '',
+                    firstname: null,
+                    lastname: null,
                     roles: ['driver'],
                     email: email,
-                    phone: '',
+                    phone: null,
                     avatar: null,
                     createdAt: firestore.Timestamp.fromDate(new Date())
                   })

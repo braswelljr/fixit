@@ -102,10 +102,10 @@ const Login = ({ navigation }) => {
     }
     Keyboard.addListener('keyboardDidShow', onKeyboardDidShow)
     Keyboard.addListener('keyboardDidHide', onKeyboardDidHide)
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
-      Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
-    }
+    // return () => {
+    //   Keyboard.removeListener('keyboardDidShow', onKeyboardDidShow)
+    //   Keyboard.removeListener('keyboardDidHide', onKeyboardDidHide)
+    // }
   }, [keyboardShowView])
 
   React.useEffect(() => {
@@ -147,7 +147,6 @@ const Login = ({ navigation }) => {
         ref={keyboardShowRef}
         onLayout={event => {
           setKeyboardShowView(event.nativeEvent.layout.y)
-          console.log(keyboardShowView)
         }}
         style={{ flex: 1 }}
       >
