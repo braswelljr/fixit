@@ -10,13 +10,48 @@ import Home from '../screens/Home'
 import Settings from '../screens/Settings'
 import Profile from '../screens/Profile'
 import ProfileEditor from '../screens/ProfileEditor'
+import MaterialCommicons from 'react-native-vector-icons/MaterialCommunityIcons'
+import F5icons from 'react-native-vector-icons/FontAwesome5'
+import Colors from '../assets/color'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 
 const HomeStack = () => {
   return (
-    <Tab.Navigator initialRouteName="Profile">
+    <Tab.Navigator
+      initialRouteName="Profile"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          if (route.name === 'Home') {
+            return (
+              <MaterialCommicons
+                name="map-marker-radius"
+                size={focused ? 27.5 : 25}
+                color={focused ? Colors.coolGray[500] : Colors.trueGray[800]}
+              />
+            )
+          } else if (route.name === 'Profile') {
+            return (
+              <F5icons
+                name="user-tie"
+                size={focused ? 27.5 : 25}
+                color={focused ? Colors.coolGray[500] : Colors.trueGray[800]}
+              />
+            )
+          } else if (route.name === 'Settings') {
+            return (
+              <MaterialCommicons
+                name="cog"
+                size={focused ? 27.5 : 25}
+                color={focused ? Colors.coolGray[500] : Colors.trueGray[800]}
+              />
+            )
+          }
+        }
+      })}
+      tabBarOptions={{ showLabel: false }}
+    >
       <Tab.Screen
         name="Home"
         component={Home}

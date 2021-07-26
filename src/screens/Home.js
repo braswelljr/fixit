@@ -35,7 +35,10 @@ const Home = () => {
         {/* Maps */}
         <MapView
           style={styles.map}
-          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : ''}
+          provider={PROVIDER_GOOGLE}
+          scrollEnabled={true}
+          zoomEnabled={true}
+          pitchEnabled={true}
           region={{
             latitude: 37.78825,
             longitude: -122.4324,

@@ -1,38 +1,37 @@
-// import { Platform, ToastAndroid } from 'react-native'
 import ImageCropPicker from 'react-native-image-crop-picker'
 import storage from '@react-native-firebase/storage'
+import firestore from '@react-native-firebase/firestore'
 
 const upLoadImg = async (image, uid) => {
   const { path } = image
-  const filename = `${uid}--${path.substring(path.lastIndexOf('/') + 1)}`
+  const filename = `${uid}`
   const uploadUri = path.replace('file://', '')
 
-  const task = storage().ref(filename).putFile(uploadUri)
-
-  // set progress state
-  // task.on('state_changed', snapshot => {
-  //   setTransferred(
-  //     Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-  //   )
-  // })
+  const reference = storage().ref(filename)
+  const task = reference.putFile(uploadUri)
+  const downloadUrl = reference.getDownloadURL()
 
   try {
-    await task
-    // .then(() => {
-    //   console.log('Image uploaded to the bucket!')
-    // })
-    // .catch(error => {
-    //   console.error('Something happend:', error)
-    // })
+    task
+      .then(() => {
+        downloadUrl
+          .then(url =>
+            firestore()
+              .collection('users')
+              .doc(uid)
+              .update({
+                avatar: `${url}`
+              })
+          )
+          .catch(error => console.error('Something happend:', error))
+        console.log('Image uploaded to the bucket!')
+      })
+      .catch(error => {
+        console.error('Something happend:', error)
+      })
   } catch (e) {
-    console.error(e)
+    console.error('Something happend:', e)
   }
-  // setUploading(false)
-  // Alert.alert(
-  //   'Photo uploaded!',
-  //   'Your photo has been uploaded to Firebase Cloud Storage!'
-  // )
-  // setImage(null)
 }
 
 export const selectFromLibrary = (showPicker, uid) => {
@@ -43,7 +42,6 @@ export const selectFromLibrary = (showPicker, uid) => {
   })
     .then(image => {
       upLoadImg(image, uid)
-      console.log(image)
       showPicker(false)
     })
     .catch(error => {

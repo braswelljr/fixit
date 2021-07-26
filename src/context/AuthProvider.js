@@ -126,6 +126,10 @@ export const AuthProvider = ({ children }) => {
                       'Something went wrong with added user to firestore: ',
                       error
                     )
+                    ToastAndroid.show(
+                      'Something went wrong with added user to firestore !',
+                      ToastAndroid.SHORT
+                    )
                   })
               })
               //we need to catch the whole sign up process if it fails too.

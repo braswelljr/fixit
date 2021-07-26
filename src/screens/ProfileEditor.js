@@ -6,6 +6,7 @@ import {
   Image,
   ScrollView,
   Keyboard,
+  ToastAndroid,
   KeyboardAvoidingView,
   Dimensions,
   TouchableOpacity,
@@ -19,6 +20,8 @@ import IonIcons from 'react-native-vector-icons/Ionicons'
 import ImagePicker from '../components/ImagePicker'
 import { usekeyboardHeight } from '../hooks/usekeyboard'
 import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayout'
+import firestore from '@react-native-firebase/firestore'
+import PhoneInput from 'react-native-phone-number-input'
 
 const ProfileEditor = ({ navigation }) => {
   const { USER } = useContext(AuthContext)
@@ -26,6 +29,9 @@ const ProfileEditor = ({ navigation }) => {
   const scrollContainerRef = useRef()
   const keyboardShowRef = React.useRef()
   const [keyboardShowView, setKeyboardShowView] = React.useState(0)
+  const phoneInput = useRef(null)
+  const [phone, setPhone] = useState(null)
+  const [isValidPhone, setValidPhone] = useState(true)
 
   const [data, setData] = useState({
     firstname: '',
@@ -131,7 +137,7 @@ const ProfileEditor = ({ navigation }) => {
               </Text>
               <TextInput
                 value={data.firstname}
-                placeholder="John"
+                placeholder={USER.firstname ?? 'John'}
                 placeholderTextColor={Colors.trueGray[400]}
                 autoCapitalize="none"
                 onChangeText={e => changefirstnameInput(e)}
@@ -146,7 +152,7 @@ const ProfileEditor = ({ navigation }) => {
               </Text>
               <TextInput
                 value={data.lastname}
-                placeholder="Doe"
+                placeholder={USER.lastname ?? 'Doe'}
                 placeholderTextColor={Colors.trueGray[400]}
                 autoCapitalize="none"
                 onChangeText={e => changelastnameInput(e)}
@@ -159,19 +165,101 @@ const ProfileEditor = ({ navigation }) => {
               <Text style={{ fontFamily: 'Montserrat-SemiBold' }}>
                 Phone Number
               </Text>
-              <TextInput
-                value={data.phone}
-                placeholder="John Doe"
+              <PhoneInput
+                ref={phoneInput}
+                value={phone}
+                layout="first"
+                defaultCode="GH"
                 placeholderTextColor={Colors.trueGray[400]}
                 autoCapitalize="none"
-                onChangeText={e => changephoneInput(e)}
-                style={styles.textInput}
-                keyboardType="email-address"
+                onChangeText={e => setPhone(e)}
+                onChangeFormattedText={e => {
+                  setValidPhone(
+                    /((?:\s|^)(?:\+\d{1,3}\s?)?1?-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})(?:\b)/.test(
+                      e
+                    )
+                      ? true
+                      : false
+                  )
+                  changephoneInput(e)
+                  console.log(data.phone)
+                }}
+                textContainerStyle={styles.phoneText}
+                containerStyle={styles.phoneContainer}
+                codeTextStyle={styles.phoneCode}
+                textInputStyle={styles.phoneCode}
+                keyboardType="phone-pad"
               />
+              {isValidPhone ? null : (
+                <Text style={styles.isValid}>Enter a valid phone number</Text>
+              )}
             </View>
             <TouchableOpacity
               style={[styles.cta, { marginTop: 15, marginHorizontal: 0 }]}
-              onPress={() => {}}
+              onPress={() => {
+                // firstname
+                if (data.firstname.length <= 0) return
+                else {
+                  firestore()
+                    .collection('users')
+                    .doc(USER.uid)
+                    .update({
+                      firstname: `${data.firstname}`
+                    })
+                    .then(() => {
+                      changefirstnameInput('')
+                    })
+                    .catch(() => {
+                      ToastAndroid.show(
+                        "Couldn't update firstname",
+                        ToastAndroid.SHORT
+                      )
+                    })
+                }
+                // lastname
+                if (data.lastname.length <= 0) return
+                else {
+                  firestore()
+                    .collection('users')
+                    .doc(USER.uid)
+                    .update({
+                      lastname: `${data.lastname}`
+                    })
+                    .then(() => {
+                      changelastnameInput('')
+                    })
+                    .catch(() => {
+                      ToastAndroid.show(
+                        "Couldn't update lastname",
+                        ToastAndroid.SHORT
+                      )
+                    })
+                }
+                // phone
+                if (data.phone.length <= 0) return
+                else if (isValidPhone !== true) return
+                else {
+                  firestore()
+                    .collection('users')
+                    .doc(USER.uid)
+                    .update({
+                      phone: `${data.phone}`
+                    })
+                    .then(() => {
+                      setPhone('')
+                    })
+                    .catch(() => {
+                      ToastAndroid.show(
+                        "Couldn't update phone",
+                        ToastAndroid.SHORT
+                      )
+                    })
+                }
+                ToastAndroid.show(
+                  'User Details updated successfully',
+                  ToastAndroid.SHORT
+                )
+              }}
             >
               <Text style={styles.ctaText}>Update Profile</Text>
             </TouchableOpacity>
@@ -266,6 +354,25 @@ const styles = StyleSheet.create({
     color: Colors.black,
     borderRadius: 7,
     marginVertical: 2.5
+  },
+  phoneCode: {
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 14
+  },
+  phoneContainer: {
+    width: '100%',
+    borderRadius: 7,
+    borderWidth: 1
+  },
+  phoneText: {
+    color: Colors.black,
+    borderRadius: 7,
+    paddingVertical: 0,
+    paddingHorizontal: 10
+  },
+  isValid: {
+    fontFamily: 'Montserrat-Regular',
+    color: Colors.red[400]
   }
 })
 
