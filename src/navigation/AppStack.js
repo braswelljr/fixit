@@ -3,6 +3,7 @@
  *
  */
 import React from 'react'
+import { View } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { HorizontalAnimation } from '../animations'
@@ -10,8 +11,9 @@ import Home from '../screens/Home'
 import Settings from '../screens/Settings'
 import Profile from '../screens/Profile'
 import ProfileEditor from '../screens/ProfileEditor'
+import ChangePassword from '../screens/ChangePassword'
 import MaterialCommicons from 'react-native-vector-icons/MaterialCommunityIcons'
-import F5icons from 'react-native-vector-icons/FontAwesome5'
+import EntypoIcons from 'react-native-vector-icons/Entypo'
 import Colors from '../assets/color'
 
 const Stack = createStackNavigator()
@@ -20,32 +22,59 @@ const Tab = createBottomTabNavigator()
 const HomeStack = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => {
           if (route.name === 'Home') {
             return (
-              <MaterialCommicons
-                name="map-marker-radius"
-                size={focused ? 27.5 : 25}
-                color={focused ? Colors.coolGray[500] : Colors.trueGray[800]}
-              />
+              <View
+                style={{
+                  backgroundColor: focused ? Colors.yellow[200] : '',
+                  paddingHorizontal: 50,
+                  borderRadius: 40,
+                  paddingVertical: 10
+                }}
+              >
+                <MaterialCommicons
+                  name="map-marker-radius"
+                  size={25}
+                  color={Colors.trueGray[800]}
+                />
+              </View>
             )
           } else if (route.name === 'Profile') {
             return (
-              <F5icons
-                name="user-tie"
-                size={focused ? 27.5 : 25}
-                color={focused ? Colors.coolGray[500] : Colors.trueGray[800]}
-              />
+              <View
+                style={{
+                  backgroundColor: focused ? Colors.yellow[200] : '',
+                  paddingHorizontal: 50,
+                  borderRadius: 40,
+                  paddingVertical: 10
+                }}
+              >
+                <EntypoIcons
+                  name="user"
+                  size={25}
+                  color={Colors.trueGray[800]}
+                />
+              </View>
             )
           } else if (route.name === 'Settings') {
             return (
-              <MaterialCommicons
-                name="cog"
-                size={focused ? 27.5 : 25}
-                color={focused ? Colors.coolGray[500] : Colors.trueGray[800]}
-              />
+              <View
+                style={{
+                  backgroundColor: focused ? Colors.yellow[200] : '',
+                  paddingHorizontal: 50,
+                  borderRadius: 40,
+                  paddingVertical: 10
+                }}
+              >
+                <MaterialCommicons
+                  name="cog"
+                  size={25}
+                  color={Colors.trueGray[800]}
+                />
+              </View>
             )
           }
         }
@@ -99,7 +128,16 @@ const AppStack = () => {
         name="ProfileEditor"
         component={ProfileEditor}
         options={{
-          title: 'Welcome',
+          title: 'Edit Profile',
+          headerShown: false,
+          ...HorizontalAnimation
+        }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePassword}
+        options={{
+          title: 'Change Password',
           headerShown: false,
           ...HorizontalAnimation
         }}

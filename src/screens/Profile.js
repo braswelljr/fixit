@@ -107,9 +107,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    width: Dimensions.get('screen').width,
-    minHeight: Dimensions.get('screen').height,
-    overflow: 'hidden'
+    minHeight: Dimensions.get('screen').height
   },
   header: {
     width: '100%',

@@ -29,7 +29,6 @@ const ProfileEditor = ({ navigation }) => {
   const scrollContainerRef = useRef()
   const keyboardShowRef = React.useRef()
   const [keyboardShowView, setKeyboardShowView] = React.useState(0)
-  const phoneInput = useRef(null)
   const [phone, setPhone] = useState(null)
   const [isValidPhone, setValidPhone] = useState(true)
 
@@ -166,13 +165,14 @@ const ProfileEditor = ({ navigation }) => {
                 Phone Number
               </Text>
               <PhoneInput
-                ref={phoneInput}
                 value={phone}
                 layout="first"
                 defaultCode="GH"
                 placeholderTextColor={Colors.trueGray[400]}
                 autoCapitalize="none"
-                onChangeText={e => setPhone(e)}
+                onChangeText={e => {
+                  setPhone(e)
+                }}
                 onChangeFormattedText={e => {
                   setValidPhone(
                     /((?:\s|^)(?:\+\d{1,3}\s?)?1?-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})(?:\b)/.test(
@@ -182,7 +182,6 @@ const ProfileEditor = ({ navigation }) => {
                       : false
                   )
                   changephoneInput(e)
-                  console.log(data.phone)
                 }}
                 textContainerStyle={styles.phoneText}
                 containerStyle={styles.phoneContainer}
@@ -197,6 +196,31 @@ const ProfileEditor = ({ navigation }) => {
             <TouchableOpacity
               style={[styles.cta, { marginTop: 15, marginHorizontal: 0 }]}
               onPress={() => {
+                // phone
+                if (data.phone.length <= 0) console.log('empty phone number')
+                else if (isValidPhone) {
+                  firestore()
+                    .collection('users')
+                    .doc(USER.uid)
+                    .update({
+                      phone: `${data.phone}`
+                    })
+                    .then(() => {
+                      setPhone('')
+                      changephoneInput('')
+                      ToastAndroid.show(
+                        'Profile Update successfully',
+                        ToastAndroid.SHORT
+                      )
+                    })
+                    .catch(() => {
+                      ToastAndroid.show(
+                        "Couldn't update phone",
+                        ToastAndroid.SHORT
+                      )
+                    })
+                } else console.log('Unable to update phone number')
+
                 // firstname
                 if (data.firstname.length <= 0) return
                 else {
@@ -208,6 +232,10 @@ const ProfileEditor = ({ navigation }) => {
                     })
                     .then(() => {
                       changefirstnameInput('')
+                      ToastAndroid.show(
+                        'Profile Update successfully',
+                        ToastAndroid.SHORT
+                      )
                     })
                     .catch(() => {
                       ToastAndroid.show(
@@ -227,6 +255,10 @@ const ProfileEditor = ({ navigation }) => {
                     })
                     .then(() => {
                       changelastnameInput('')
+                      ToastAndroid.show(
+                        'Profile Update successfully',
+                        ToastAndroid.SHORT
+                      )
                     })
                     .catch(() => {
                       ToastAndroid.show(
@@ -235,30 +267,6 @@ const ProfileEditor = ({ navigation }) => {
                       )
                     })
                 }
-                // phone
-                if (data.phone.length <= 0) return
-                else if (isValidPhone !== true) return
-                else {
-                  firestore()
-                    .collection('users')
-                    .doc(USER.uid)
-                    .update({
-                      phone: `${data.phone}`
-                    })
-                    .then(() => {
-                      setPhone('')
-                    })
-                    .catch(() => {
-                      ToastAndroid.show(
-                        "Couldn't update phone",
-                        ToastAndroid.SHORT
-                      )
-                    })
-                }
-                ToastAndroid.show(
-                  'User Details updated successfully',
-                  ToastAndroid.SHORT
-                )
               }}
             >
               <Text style={styles.ctaText}>Update Profile</Text>
