@@ -45,12 +45,12 @@ const Settings = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Settings</Text>
-      <View style={[{ paddingHorizontal: 30, marginTop: 30 }]}>
+      <View style={[{ marginTop: 30 }]}>
         {/* Account Header */}
         <View style={[styles.sectionHeader]}>
           <MaterialCommIcons
             name="account-cog"
-            color={Colors.trueGray[500]}
+            color={Colors.trueGray[900]}
             size={20}
           />
           <Text style={[styles.sectionHeaderText]}>Account</Text>
@@ -67,7 +67,7 @@ const Settings = ({ navigation }) => {
                 justifyContent: 'space-between',
                 marginTop: i == 0 ? 0 : 15,
                 paddingVertical: 10,
-                paddingHorizontal: 5
+                paddingHorizontal: 25
               }}
               disabled={data.disabled}
             >
@@ -88,12 +88,12 @@ const Settings = ({ navigation }) => {
           ))}
         </View>
       </View>
-      <View style={[{ paddingHorizontal: 30, marginTop: 30 }]}>
+      <View style={[{ marginTop: 30 }]}>
         {/* Favorite Header */}
         <View style={[styles.sectionHeader]}>
           <MaterialIcons
             name="favorite"
-            color={Colors.trueGray[500]}
+            color={Colors.trueGray[900]}
             size={20}
           />
           <Text style={[styles.sectionHeaderText]}>Favourite Places</Text>
@@ -109,7 +109,7 @@ const Settings = ({ navigation }) => {
                 justifyContent: 'space-between',
                 marginTop: i == 0 ? 0 : 15,
                 paddingVertical: 10,
-                paddingHorizontal: 5
+                paddingHorizontal: 25
               }}
               disabled={data.disabled}
             >
@@ -168,12 +168,13 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.yellow[50],
-    padding: 10
+    backgroundColor: Colors.yellow[100],
+    paddingVertical: 10,
+    paddingHorizontal: 25
   },
   sectionHeaderText: {
-    fontFamily: 'Montserrat-Bold',
-    color: Colors.trueGray[500],
+    fontFamily: 'Montserrat-SemiBold',
+    color: Colors.trueGray[900],
     textTransform: 'uppercase',
     fontSize: 16,
     marginLeft: 10

@@ -14,13 +14,13 @@ const ImagePicker = ({ picker, showPicker }) => {
     toAnime({
       ref: translateY,
       toValue: 0,
-      duration: 300
+      duration: 200
     })
   else
     toAnime({
       ref: translateY,
       toValue: 150,
-      duration: 300
+      duration: 200
     })
 
   return (

@@ -2,103 +2,210 @@ import React, { useContext, useState } from 'react'
 import {
   View,
   Text,
-  ScrollView,
-  Dimensions,
-  ImageBackground,
   TouchableOpacity,
+  ScrollView,
+  Pressable,
   Image,
   StyleSheet,
   Platform
 } from 'react-native'
-import IonIcons from 'react-native-vector-icons/Ionicons'
-import FeatherIcons from 'react-native-vector-icons/Feather'
+import MaterialCommIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Colors from '../assets/color'
 import { AuthContext } from '../context/AuthProvider'
-import { useNavigation } from '@react-navigation/native'
 import ImagePicker from '../components/ImagePicker'
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   const [picker, showPicker] = useState(false)
-  const navigation = useNavigation()
   const { USER } = useContext(AuthContext)
 
   return (
     <>
       <ImagePicker picker={picker} showPicker={showPicker} />
-      <View style={styles.container}>
-        <ImageBackground
-          style={styles.header}
-          source={require('../assets/images/mechanic-ii.jpg')}
-        >
-          <View style={styles.headerCover}>
-            <Text style={styles.topic}>Profile</Text>
-          </View>
-        </ImageBackground>
-        <View style={styles.avatar}>
-          {USER.avatar === null ? (
-            <>
-              <Image
-                source={require('../assets/images/avatar.jpg')}
-                style={styles.avatarImg}
-              />
-              <TouchableOpacity
-                style={styles.camera}
-                onPress={() => showPicker(!picker)}
-              >
-                <IonIcons
-                  name="ios-camera"
-                  size={35}
-                  style={styles.cameraIcon}
-                />
-              </TouchableOpacity>
-            </>
-          ) : (
-            <Image source={{ uri: USER.avatar }} style={styles.avatarImg} />
-          )}
-        </View>
-        <View style={styles.content}>
-          <TouchableOpacity
-            style={[
-              styles.cta,
-              {
-                width: '45%',
-                alignSelf: 'flex-end',
-
-                marginTop: 80,
-                marginRight: 20
+      <ScrollView style={styles.container}>
+        <Text style={styles.header}>Profile</Text>
+        <View>
+          {/* Avatar */}
+          <View style={styles.avatar}>
+            <Image
+              source={
+                USER.avatar === null
+                  ? require('../assets/images/avatar.jpg')
+                  : { uri: USER.avatar }
               }
-            ]}
-            onPress={() => navigation.navigate('ProfileEditor')}
-          >
-            <FeatherIcons name="bookmark" size={15} style={styles.cameraIcon} />
-            <Text style={[styles.ctaText, { fontSize: 12, marginLeft: 10 }]}>
-              Edit Profile
-            </Text>
-          </TouchableOpacity>
-          {/* Profile */}
-          <View style={styles.profile}>
-            {/* email */}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <FeatherIcons
-                name="mail"
-                size={18}
+              style={styles.avatarImg}
+            />
+            <TouchableOpacity
+              style={styles.camera}
+              onPress={() => showPicker(!picker)}
+            >
+              <MaterialCommIcons
+                name="camera-iris"
+                size={35}
                 color={Colors.trueGray[700]}
               />
-              <Text
-                style={{
-                  fontFamily: 'Montserrat-Regular',
-                  marginLeft: 10,
-                  fontSize: 16
-                }}
-              >
-                {USER.email}
-              </Text>
-            </View>
+            </TouchableOpacity>
+          </View>
 
-            <View></View>
+          {/* User Details */}
+          <View style={[{ marginTop: 25 }]}>
+            {(USER.firstname !== null ||
+              USER.lastname !== null ||
+              USER.phone !== null) && (
+              <TouchableOpacity
+                style={[styles.cta]}
+                onPress={() => navigation.navigate('ProfileEditor')}
+              >
+                <Text style={styles.ctaText}>Update Profile</Text>
+              </TouchableOpacity>
+            )}
+            {/* username */}
+            {(USER.firstname !== null || USER.lastname !== null) && (
+              <View style={[styles.username]}>
+                {USER.firstname !== null && (
+                  <Text style={styles.name}>{USER.firstname}</Text>
+                )}
+                {USER.lastname !== null && (
+                  <Text
+                    style={[
+                      styles.name,
+                      { marginLeft: USER.firstname !== null ? 5 : 0 }
+                    ]}
+                  >
+                    {USER.lastname}
+                  </Text>
+                )}
+              </View>
+            )}
+            {/* email */}
+            <View
+              style={{
+                backgroundColor: Colors.yellow[50],
+                marginTop: 20
+              }}
+            >
+              <View style={[styles.fieldContainer]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <MaterialCommIcons
+                    name="email"
+                    size={20}
+                    color={Colors.trueGray[600]}
+                  />
+                  <Text
+                    style={{ fontFamily: 'Montserrat-Thin', marginLeft: 10 }}
+                  >
+                    Email
+                  </Text>
+                </View>
+                <Text style={{ fontFamily: 'Montserrat-Medium' }}>
+                  {USER.email}
+                </Text>
+              </View>
+              {USER.phone !== null && (
+                <View
+                  style={[
+                    styles.fieldContainer,
+                    {
+                      marginTop: 5
+                    }
+                  ]}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <MaterialCommIcons
+                      name="phone-outline"
+                      size={20}
+                      color={Colors.trueGray[600]}
+                    />
+                    <Text
+                      style={{ fontFamily: 'Montserrat-Thin', marginLeft: 10 }}
+                    >
+                      Phone
+                    </Text>
+                  </View>
+                  <Text style={{ fontFamily: 'Montserrat-Medium' }}>
+                    {USER.phone}
+                  </Text>
+                </View>
+              )}
+            </View>
+            {/* render card */}
+            {(USER.firstname === null ||
+              USER.lastname === null ||
+              USER.phone === null) && (
+              <View style={styles.card}>
+                <Text style={styles.cardHeader}>Hi 😊</Text>
+                <Text style={styles.cardText}>
+                  Update your profile to help serve you better.
+                </Text>
+                <TouchableOpacity
+                  style={[
+                    styles.cta,
+                    {
+                      marginTop: 10,
+                      marginHorizontal: 10
+                    }
+                  ]}
+                  onPress={() => navigation.navigate('ProfileEditor')}
+                >
+                  <Text style={styles.ctaText}>Update Profile</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Add Places */}
+            <Text style={styles.placeHeader}>Add Places</Text>
+            <View>
+              <Pressable style={styles.place} disabled={true}>
+                <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                  <MaterialCommIcons
+                    name="home-roof"
+                    size={25}
+                    color={Colors.trueGray[700]}
+                  />
+                  <Text style={[styles.placeText]}>Home</Text>
+                </View>
+                <Text style={styles.unavailable}>{'unavailable'}</Text>
+              </Pressable>
+              <Pressable style={styles.place} disabled={true}>
+                <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                  <MaterialIcons
+                    name="work"
+                    size={20}
+                    color={Colors.trueGray[700]}
+                  />
+                  <Text style={[styles.placeText]}>Work</Text>
+                </View>
+                <Text style={styles.unavailable}>{'unavailable'}</Text>
+              </Pressable>
+
+              {/* Add Places Button */}
+              <TouchableOpacity
+                style={[
+                  styles.cta,
+                  {
+                    marginTop: 10,
+                    marginHorizontal: 20
+                  }
+                ]}
+              >
+                <MaterialCommIcons
+                  name="map-marker-radius"
+                  size={20}
+                  color={Colors.trueGray[700]}
+                />
+                <Text
+                  style={[
+                    styles.ctaText,
+                    { textTransform: 'capitalize', marginLeft: 10 }
+                  ]}
+                >
+                  Add Places
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   )
 }
@@ -106,69 +213,37 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
-    minHeight: Dimensions.get('screen').height
+    backgroundColor: Colors.white
   },
   header: {
-    width: '100%',
-    height: Dimensions.get('screen').height * 0.6
-  },
-  headerCover: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0
-  },
-  topic: {
-    fontFamily: 'MontserratAlternates-Bold',
-    textTransform: 'uppercase',
-    fontSize: 40,
-    color: Colors.white,
     textAlign: 'center',
-    marginTop: Platform.OS == 'ios' ? 130 : 100
+    textTransform: 'uppercase',
+    fontFamily: 'MontserratAlternates-Bold',
+    fontSize: 22,
+    marginTop: Platform.OS == 'ios' ? 60 : 30
   },
   avatar: {
     height: 150,
     width: 150,
-    position: 'relative',
-    alignSelf: 'flex-start',
-    top: '-27.5%',
-    zIndex: 1,
-    overflow: 'hidden'
+    alignSelf: 'center',
+    marginTop: 20
   },
   avatarImg: {
     height: 150,
     width: 150,
-    borderRadius: 100,
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 5,
-      height: 5
-    }
+    borderRadius: 100
   },
   camera: {
     position: 'absolute',
-    zIndex: 2,
-    bottom: 7.5,
-    right: 7.5,
-    padding: 2.5,
-    borderRadius: 10,
-    backgroundColor: Colors.trueGray[200]
+    padding: 5,
+    bottom: 0,
+    right: 0,
+    borderRadius: 50,
+    backgroundColor: Colors.yellow[200],
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  cameraIcon: {
-    color: Colors.trueGray[700]
-  },
-  content: {
-    position: 'absolute',
-    width: '100%',
-    height: '65%',
-    backgroundColor: Colors.trueGray[50],
-    borderTopLeftRadius: 65,
-    borderTopRightRadius: 50,
-    bottom: 0
-  },
+  content: {},
   cta: {
     paddingHorizontal: 40,
     marginHorizontal: 30,
@@ -183,34 +258,51 @@ const styles = StyleSheet.create({
     color: Colors.black,
     textTransform: 'uppercase'
   },
-  profile: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
+  fieldContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+    paddingVertical: 15
+  },
+  card: {
+    backgroundColor: Colors.yellow[100],
+    paddingHorizontal: 20,
+    paddingVertical: 25,
     marginTop: 20,
-    backgroundColor: Colors.yellow[50]
+    marginHorizontal: 20,
+    borderRadius: 10
   },
-  updateCard: {
-    marginVertical: 15,
-    marginHorizontal: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    backgroundColor: Colors.sky[50],
-    borderRadius: 20
-  },
-  updateCardtext: {
-    fontFamily: 'MontserratAlternates-Medium',
-    fontSize: 16
-  },
-  name: {
+  cardHeader: {
     fontFamily: 'MontserratAlternates-SemiBold',
+    fontSize: 20
+  },
+  cardText: {
+    fontFamily: 'Montserrat-Regular',
     fontSize: 16
   },
-  profileSection: {
+  username: { flexDirection: 'row', marginTop: 20, marginHorizontal: 30 },
+  name: { fontFamily: 'Montserrat-SemiBold' },
+  placeHeader: {
+    fontFamily: 'MontserratAlternates-SemiBold',
+    fontSize: 18,
+    marginTop: 20,
+    marginHorizontal: 30
+  },
+  unavailable: {
+    fontFamily: 'Montserrat-Thin',
+    color: Colors.trueGray[500],
+    textTransform: 'uppercase',
+    fontSize: 10
+  },
+  place: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10
-  }
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingHorizontal: 25
+  },
+  placeText: { fontFamily: 'Montserrat-Regular', marginLeft: 20 }
 })
 
 export default Profile

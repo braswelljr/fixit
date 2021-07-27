@@ -16,7 +16,7 @@ import {
 import Colors from '../assets/color'
 import { AuthContext } from '../context/AuthProvider'
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import IonIcons from 'react-native-vector-icons/Ionicons'
+import MaterialCommIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ImagePicker from '../components/ImagePicker'
 import { usekeyboardHeight } from '../hooks/usekeyboard'
 import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayout'
@@ -109,19 +109,23 @@ const ProfileEditor = ({ navigation }) => {
           style={styles.content}
         >
           <View style={styles.avatar}>
-            {USER.avatar === null ? (
-              <Image
-                source={require('../assets/images/avatar.jpg')}
-                style={styles.avatarImg}
-              />
-            ) : (
-              <Image source={{ uri: USER.avatar }} style={styles.avatarImg} />
-            )}
+            <Image
+              source={
+                USER.avatar === null
+                  ? require('../assets/images/avatar.jpg')
+                  : { uri: USER.avatar }
+              }
+              style={styles.avatarImg}
+            />
             <TouchableOpacity
               style={styles.camera}
               onPress={() => showPicker(!picker)}
             >
-              <IonIcons name="ios-camera" size={35} style={styles.cameraIcon} />
+              <MaterialCommIcons
+                name="camera-iris"
+                size={35}
+                color={Colors.trueGray[700]}
+              />
             </TouchableOpacity>
           </View>
 
@@ -197,7 +201,8 @@ const ProfileEditor = ({ navigation }) => {
               style={[styles.cta, { marginTop: 15, marginHorizontal: 0 }]}
               onPress={() => {
                 // phone
-                if (data.phone.length <= 0) console.log('empty phone number')
+                if (data.phone.trim().length <= 0)
+                  console.log('empty phone number')
                 else if (isValidPhone) {
                   firestore()
                     .collection('users')
@@ -222,7 +227,7 @@ const ProfileEditor = ({ navigation }) => {
                 } else console.log('Unable to update phone number')
 
                 // firstname
-                if (data.firstname.length <= 0) return
+                if (data.firstname.trim().length <= 0) return
                 else {
                   firestore()
                     .collection('users')
@@ -245,7 +250,7 @@ const ProfileEditor = ({ navigation }) => {
                     })
                 }
                 // lastname
-                if (data.lastname.length <= 0) return
+                if (data.lastname.trim().length <= 0) return
                 else {
                   firestore()
                     .collection('users')
@@ -309,30 +314,22 @@ const styles = StyleSheet.create({
     height: 150,
     width: 150,
     alignSelf: 'center',
-    overflow: 'hidden',
-    marginTop: 30
+    marginTop: 20
   },
   avatarImg: {
     height: 150,
     width: 150,
-    borderRadius: 100,
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 5,
-      height: 5
-    }
+    borderRadius: 100
   },
   camera: {
     position: 'absolute',
-    zIndex: 2,
-    bottom: 7.5,
-    right: 7.5,
-    padding: 2.5,
-    borderRadius: 10,
-    backgroundColor: Colors.trueGray[200]
-  },
-  cameraIcon: {
-    color: Colors.trueGray[700]
+    padding: 5,
+    bottom: 0,
+    right: 0,
+    borderRadius: 50,
+    backgroundColor: Colors.yellow[200],
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   cta: {
     paddingHorizontal: 40,

@@ -115,6 +115,7 @@ export const AuthProvider = ({ children }) => {
                     firstname: null,
                     lastname: null,
                     roles: ['driver'],
+                    location: null,
                     email: email,
                     phone: null,
                     avatar: null,

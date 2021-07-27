@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -11,11 +11,9 @@ import Colors from '../assets/color'
 import Search from '../components/Search'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import IonIcons from 'react-native-vector-icons/Ionicons'
-import { AuthContext } from '../context/AuthProvider'
 
 const Home = () => {
   const [search, showSearch] = useState(false)
-  const { USER } = useContext(AuthContext)
 
   return (
     <>
